@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
+import { Spin } from 'antd';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -7,7 +8,9 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <div id="app">
-      <App />
+      <Suspense fallback={<Spin size="large" delay={100} />}>
+        <App />
+      </Suspense>
     </div>
   </React.StrictMode>,
   document.getElementById('root')
