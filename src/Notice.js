@@ -14,7 +14,6 @@ function Notice({ visible, noticed, onCancel }) {
   const handleScroll = (e) => {
     if (disabled) {
       const { scrollHeight, scrollTop, clientHeight } = e.target;
-      console.log(scrollHeight, scrollTop, clientHeight);
       scrollHeight - (scrollTop + clientHeight) <= 24 && toggleDisabled(false);
     }
   }
@@ -46,6 +45,7 @@ function Notice({ visible, noticed, onCancel }) {
           >确定</Button>
         </Space>
       }
+      onCancel={onCancel}
     >
       <div id="notice" onScroll={handleScroll}>
         <Typography>

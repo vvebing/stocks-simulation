@@ -34,6 +34,33 @@ body {
   max-width: 800px;
 }
 
+#main {
+  height: 75%;
+  min-height: 800px;
+  max-height: 1000px;
+  width: 75%;
+  min-width: 600px;
+  max-width: 800px;
+}
+
+#main .content {
+  display: flex;
+}
+
+#main .extra {
+  display: flex;
+  width: max-content;
+  justify-content: flex-end;
+}
+
+#main .extra .ant-statistic:first-of-type {
+  margin-right: 32px;
+}
+
+#main .ant-form {
+  padding: 16px 24px;
+}
+
 @media (max-width: 575px) {
   .ant-col.ant-col-offset-4 {
     margin-left: unset;
