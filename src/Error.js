@@ -1,7 +1,7 @@
 import { Button, Result } from 'antd';
 import React from 'react';
 
-function Error({ status, onBtnClick }) {
+function Error({ status, goBack }) {
   return (
     <Result
       status="500"
@@ -10,7 +10,7 @@ function Error({ status, onBtnClick }) {
       extra={
         <Button
           type="primary"
-          onClick={onBtnClick}
+          onClick={goBack}
         >{status === -1 ? '清除实验数据' : '刷新'}</Button>
       }
     />

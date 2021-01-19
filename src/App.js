@@ -112,6 +112,7 @@ export default class App extends PureComponent {
           noticed: false,
           showNotice: true,
           trades: [],
+          status: 0,
         });
       },
     });
@@ -127,6 +128,7 @@ export default class App extends PureComponent {
         await localForage.removeItem('trades');
         this.setState({
           trades: [],
+          status: 0,
         });
       },
     });
@@ -136,7 +138,7 @@ export default class App extends PureComponent {
     this.setState({ showNotice: true });
   }
 
-  onBtnClick = async () => {
+  goBack = async () => {
     const { status } = this.state;
     if (status === -1) {
       await localForage.removeItem('trades');
@@ -148,6 +150,67 @@ export default class App extends PureComponent {
     } else {
       window.location.reload();
     }
+  }
+
+  handleStart = (stock) => {
+    this.setState((state) => ({
+      trades: [...state.trades, {
+        stock,
+        buy: [300],
+        sell: [0],
+        mood: [],
+      }],
+      status: 1,
+    }), () => {
+      const { trades } = this.state;
+      localForage.setItem('trades', trades);
+    });
+  }
+
+  handleTrade = (option, amount) => {
+    const { trades } = this.state;
+    const latestData = trades[trades.length - 1];
+    if (latestData) {
+      const { buy, sell, mood } = latestData;
+      if (buy.length !== sell.length) {
+        return this.setState({ status: -1 });
+      }
+      if (buy.length >= 21) {
+        if (mood.length < 5) {
+          this.setState({ status: 2 });
+        } else {
+          this.setState({ status: 3 });
+        }
+      } else {
+        const updateKeys = {};
+        if (option === 'buy') {
+          updateKeys.buy = [...buy, amount];
+          updateKeys.sell = [...sell, 0];
+        } else if (option === 'sell') {
+          updateKeys.buy = [...buy, 0];
+          updateKeys.sell = [...sell, amount];
+        } else {
+          updateKeys.buy = [...buy, 0];
+          updateKeys.sell = [...sell, 0];
+        }
+        const newTrades = trades.slice();
+        newTrades.splice(-1, 1, {
+          ...latestData,
+          ...updateKeys,
+        });
+        this.setState({
+          trades: newTrades,
+        }, () => {
+          localForage.setItem('trades', newTrades);
+        });
+      }
+    } else {
+      this.setState({ status: 0 });
+    }
+  }
+
+  onSubmit = (data) => {
+    console.log(data);
   }
 
   render() {
@@ -167,7 +230,7 @@ export default class App extends PureComponent {
     }
 
     if (error || status === -1) {
-      return <Error status={status} onBtnClick={this.onBtnClick} />;
+      return <Error status={status} goBack={this.goBack} />;
     }
 
     if (!uuid || !groupID) {
@@ -179,17 +242,17 @@ export default class App extends PureComponent {
     switch(status) {
       case 0: {
         subTitle = `即将开始第${trades.length + 1}轮实验`;
-        childComponent = <Preparation />;
+        childComponent = <Preparation trades={trades} groupID={groupID} handleStart={this.handleStart} />;
         break;
       }
       case 1: {
         subTitle = `正在进行第${trades.length}轮实验`;
-        childComponent = <Dashboard />;
+        childComponent = <Dashboard trades={trades} />;
         break;
       }
       case 2: {
         subTitle = `已结束第${trades.length}轮实验`;
-        childComponent = <Questionnaire />;
+        childComponent = <Questionnaire onSubmit={this.onSubmit} />;
         break;
       }
       case 3: {
@@ -259,12 +322,12 @@ function getExperimentStatus(trades) {
   } = latestData || {};
   if (
     !latestData || (
-      buy.length === 21 ||
-      sell.length === 21
+      buy.length >= 21 ||
+      sell.length >= 21
     )
   ) {
-    if (mood.length === 0 || mood.length === 5) {
-      if (trades.length === 5) {
+    if (mood.length === 0 || mood.length >= 5) {
+      if (trades.length >= 5) {
         status = 3;
       } else {
         status = 0;
@@ -283,3 +346,5 @@ function getExperimentStatus(trades) {
   }
   return status;
 }
+
+export function calc() {}
