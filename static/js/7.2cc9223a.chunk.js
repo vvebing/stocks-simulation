@@ -1,2 +1,0 @@
-(this["webpackJsonpstocks-simulation"]=this["webpackJsonpstocks-simulation"]||[]).push([[7],{227:function(t,n,e){"use strict";e.r(n),e.d(n,"default",(function(){return o}));var r=e(6),s=e(41),c=e(42),i=e(46),u=e(44),a=e(0),o=function(t){Object(i.a)(e,t);var n=Object(u.a)(e);function e(){return Object(s.a)(this,e),n.apply(this,arguments)}return Object(c.a)(e,[{key:"render",value:function(){return Object(r.jsx)("div",{children:"Dashboard"})}}]),e}(a.PureComponent)}}]);
-//# sourceMappingURL=7.2cc9223a.chunk.js.map
