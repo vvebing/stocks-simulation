@@ -262,10 +262,8 @@ function Preparation({ trades, groupID, handleStart }) {
           return (
             <div id="step">
               <Typography>
-                <Typography.Paragraph>
-                  接下来，进入股票交易环节。您选择的股票为
-                  <Typography.Text strong>{STOCK[stock]}</Typography.Text>
-                  ，持有数量为
+                <Typography.Title level={5}>
+                  接下来，进入股票交易环节。您选择的股票为{STOCK[stock]}，持有数量为
                   <Typography.Text keyboard>300</Typography.Text>
                   ，以及现金金币
                   <Typography.Text keyboard>2000</Typography.Text>
@@ -275,15 +273,11 @@ function Preparation({ trades, groupID, handleStart }) {
                   <Typography.Text keyboard>Point 1</Typography.Text>
                   ～
                   <Typography.Text keyboard>Point 20</Typography.Text>
-                  ），股票的价格变化是
-                  <Typography.Text strong>随机</Typography.Text>
-                  的。
-                </Typography.Paragraph>
-                <Typography.Paragraph>
-                  <Typography.Text strong>
+                  ），股票的价格变化是随机的。
+                </Typography.Title>
+                <Typography.Title level={5}>
                     点击确认进入正式交易任务。
-                  </Typography.Text>
-                </Typography.Paragraph>
+                </Typography.Title>
               </Typography>
             </div>
           )

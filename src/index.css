@@ -8,7 +8,7 @@ body {
 }
 
 #app {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,10 +36,11 @@ body {
 
 #main {
   min-height: 800px;
-  max-height: 1025px;
   width: 75%;
   min-width: 600px;
   max-width: 800px;
+  display: flex;
+  flex-direction: column;
 }
 
 #main .content {
@@ -60,12 +61,54 @@ body {
   padding: 16px 24px;
 }
 
+#preparation {
+  padding: 16px 24px;
+  height: 910px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 #step {
   padding: 20px;
 }
 
 #step .introduce {
   margin:  20px 0;
+}
+
+#dashboard {
+  flex: 1;
+  padding: 16px 24px;
+}
+
+#dashboard .chart {
+  height: 350px;
+}
+
+#dashboard .data {
+  display: flex;
+  margin-top: 16px;
+}
+
+#dashboard .describe {
+  flex: 1;
+}
+
+#dashboard .option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#dashboard .option .ant-row:not(:last-of-type) {
+  margin-bottom: 24px;
+}
+
+#dashboard .option .input-label {
+  font-size: 14px;
+  line-height: 40px;
 }
 
 @media (max-width: 575px) {
