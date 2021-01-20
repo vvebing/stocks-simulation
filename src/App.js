@@ -368,7 +368,7 @@ function getExperimentStatus(trades) {
       if (trades.length >= 5) {
         status = 3;
       } else {
-        status = 1;
+        status = mood.length === 0 ? 1 : 0;
       }
     } else {
       status = 2;
@@ -391,8 +391,6 @@ export function calc(trade) {
     !stock
     || !Array.isArray(buy)
     || !Array.isArray(sell)
-    || buy.length < 21
-    || sell.length < 21
   ) {
     return {};
   }
@@ -401,16 +399,17 @@ export function calc(trade) {
   let profit = 0;
   let position = 0;
   for (let i = 0; i < buy.length; i += 1) {
-    cost += buy[i] * data[stock][i];
+    cost += buy[i] * (data[stock][i - 1] ?? 10);
     amount += buy[i];
     position += buy[i] - sell[i];
     profit += sell[i] * data[stock][i];
   }
   const averageCost = cost / amount;
   const balance = 5000 + profit - cost;
-  const marketValue = position * data[stock][19];
+  const marketValue = position * data[stock][buy.length - 1];
   const totalAsset = balance + marketValue;
   const totalProfit = totalAsset - 5000;
+  const maxBuy = Math.floor(balance / data[stock][buy.length - 1])
   return {
     averageCost,
     position,
@@ -418,5 +417,6 @@ export function calc(trade) {
     balance,
     marketValue,
     totalAsset,
+    maxBuy,
   };
 }

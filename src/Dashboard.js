@@ -21,6 +21,7 @@ export default class Dashboard extends PureComponent {
       balance = 0,
       marketValue = 0,
       totalAsset = 0,
+      maxBuy = 0,
     } = calc(latestData);
     const currentProfit = (data[latestData.stock][latestData.buy.length - 1] - averageCost) * position;
     this.state = {
@@ -29,11 +30,12 @@ export default class Dashboard extends PureComponent {
       sellValue: 0,
       averageCost: averageCost.toFixed(4),    // 加权成本
       position,       // 持仓
-      currentProfit,  // 当前盈亏
-      totalProfit,    // 总盈亏
-      balance,        // 现金余额
-      marketValue,    // 股票市值
-      totalAsset,     // 总资产
+      currentProfit: currentProfit.toFixed(4),  // 当前盈亏
+      totalProfit: totalProfit.toFixed(4),    // 总盈亏
+      balance: balance.toFixed(4),        // 现金余额
+      marketValue: marketValue.toFixed(4),    // 股票市值
+      totalAsset: totalAsset.toFixed(4),     // 总资产
+      maxBuy,
     };
     this.lineRef = createRef();
   }
@@ -103,13 +105,13 @@ export default class Dashboard extends PureComponent {
         {
           name: '股票价格',
           type: 'line',
-          data: [10, ...data.A].slice(0, buy.length),
-          markPoint: buy.length > 1 ? {
+          data: [10, ...data[stock]].slice(0, buy.length + 1),
+          markPoint: {
             data: [
               { type: 'min', name: '最低值' },
               { type: 'max', name: '最高值' },
             ],
-          } : {},
+          },
         }
       ],
     };
@@ -182,12 +184,12 @@ export default class Dashboard extends PureComponent {
         <Descriptions bordered column={1}>
           <Descriptions.Item label="成本">{+averageCost}</Descriptions.Item>
           <Descriptions.Item label="持仓">{position}</Descriptions.Item>
-          <Descriptions.Item label="总盈亏">{totalProfit}</Descriptions.Item>
-          <Descriptions.Item label="现金余额">{balance}</Descriptions.Item>
-          <Descriptions.Item label="股票市值">{marketValue}</Descriptions.Item>
-          <Descriptions.Item label="总资产">{totalAsset}</Descriptions.Item>
+          <Descriptions.Item label="总盈亏">{+totalProfit}</Descriptions.Item>
+          <Descriptions.Item label="现金余额">{+balance}</Descriptions.Item>
+          <Descriptions.Item label="股票市值">{+marketValue}</Descriptions.Item>
+          <Descriptions.Item label="总资产">{+totalAsset}</Descriptions.Item>
         </Descriptions>
-        <h2>{`您在本轮交易任务的累计盈亏为：${totalProfit}金币。`}</h2>
+        <h2>{`您在本轮交易任务的累计盈亏为：${+totalProfit}金币。`}</h2>
         <Button type="primary" onClick={handleNext}>点击继续</Button>
       </div>
     ) : (
@@ -196,14 +198,14 @@ export default class Dashboard extends PureComponent {
         <div className="data">
           <div className="describe">
             <Descriptions bordered column={1} title="资产配置">
-              <Descriptions.Item label="当前股价">{STOCK[stock][buy.length - 1]}</Descriptions.Item>
+              <Descriptions.Item label="当前股价">{data[stock][buy.length - 1]}</Descriptions.Item>
               <Descriptions.Item label="成本">{+averageCost}</Descriptions.Item>
               <Descriptions.Item label="持仓">{position}</Descriptions.Item>
-              <Descriptions.Item label="当前盈亏">{currentProfit}</Descriptions.Item>
-              <Descriptions.Item label="总盈亏">{totalProfit}</Descriptions.Item>
-              <Descriptions.Item label="现金余额">{balance}</Descriptions.Item>
-              <Descriptions.Item label="股票市值">{marketValue}</Descriptions.Item>
-              <Descriptions.Item label="总资产">{totalAsset}</Descriptions.Item>
+              <Descriptions.Item label="当前盈亏">{+currentProfit}</Descriptions.Item>
+              <Descriptions.Item label="总盈亏">{+totalProfit}</Descriptions.Item>
+              <Descriptions.Item label="现金余额">{+balance}</Descriptions.Item>
+              <Descriptions.Item label="股票市值">{+marketValue}</Descriptions.Item>
+              <Descriptions.Item label="总资产">{+totalAsset}</Descriptions.Item>
             </Descriptions>
           </div>
           <div className="option">
