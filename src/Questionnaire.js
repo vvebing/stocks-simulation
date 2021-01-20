@@ -34,7 +34,7 @@ const QUESTION = [
   },
 ];
 
-function Questionnaire({ onSubmit }) {
+function Questionnaire({ onQuestionSubmit }) {
   const [form] = Form.useForm();
   const onReset = () => {
     form.resetFields();
@@ -44,7 +44,7 @@ function Questionnaire({ onSubmit }) {
     <Form
       form={form}
       layout="vertical"
-      onFinish={onSubmit}
+      onFinish={onQuestionSubmit}
     >
       {
         QUESTION.map(({

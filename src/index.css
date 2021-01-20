@@ -84,6 +84,8 @@ body {
 
 #dashboard .chart {
   height: 350px;
+  max-width: 752px;
+  min-width: 552px;
 }
 
 #dashboard .data {

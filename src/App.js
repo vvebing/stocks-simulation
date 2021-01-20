@@ -9,6 +9,8 @@ import {
   Statistic,
 } from 'antd';
 
+import data from './data.json';
+
 const Login = lazy(() => import('./Login'));
 const Error = lazy(() => import('./Error'));
 const Finish = lazy(() => import('./Finish'));
@@ -45,6 +47,8 @@ export default class App extends PureComponent {
        */
       status: 0,
       error: false,
+      totalProfit: 0,
+      totalProfitRate: 0,
     };
   }
 
@@ -63,11 +67,22 @@ export default class App extends PureComponent {
         return this.setState(nextState);
       }
       const trades = await localForage.getItem('trades') ?? [];
+      let totalProfit = 0;
+      let totalProfitRate = 0;
+      for (let i = 0; i < trades.length; i += 1) {
+        const { totalProfit: profit = 0 } = calc(trades[i]);
+        totalProfit += profit;
+        totalProfitRate += (totalProfit / 5000) * 100;
+      }
+      totalProfit = +totalProfit.toFixed(2);
+      totalProfitRate = totalProfitRate.toFixed(2);
       const status = getExperimentStatus(trades);
       this.setState({
         ...nextState,
         trades,
         status,
+        totalProfit,
+        totalProfitRate,
       });
     } catch (err) {
       this.setState({
@@ -167,6 +182,10 @@ export default class App extends PureComponent {
     });
   }
 
+  handleNext = () => {
+    this.setState({ status: 2 });
+  }
+
   handleTrade = (option, amount) => {
     const { trades } = this.state;
     const latestData = trades[trades.length - 1];
@@ -209,8 +228,25 @@ export default class App extends PureComponent {
     }
   }
 
-  onSubmit = (data) => {
-    console.log(data);
+  onQuestionSubmit = (data) => {
+    const { trades } = this.state;
+    const latestData = trades[trades.length - 1];
+    if (!latestData) {
+      return this.setState({
+        status: -1,
+      });
+    }
+    const newTrades = trades.slice();
+    newTrades.splice(-1, 1, {
+      ...latestData,
+      mood: Array.from({ length: 5, ...data }),
+    });
+    this.setState({
+      trades: newTrades,
+      status: 0,
+    }, () => {
+      localForage.setItem('trades', newTrades);
+    });
   }
 
   render() {
@@ -223,6 +259,8 @@ export default class App extends PureComponent {
       showNotice,
       trades,
       status,
+      totalProfit,
+      totalProfitRate,
      } = this.state;
 
     if (loading) {
@@ -247,12 +285,12 @@ export default class App extends PureComponent {
       }
       case 1: {
         subTitle = `正在进行第${trades.length}轮实验`;
-        childComponent = <Dashboard trades={trades} />;
+        childComponent = <Dashboard trades={trades} handleTrade={this.handleTrade} handleNext={this.handleNext} />;
         break;
       }
       case 2: {
         subTitle = `已结束第${trades.length}轮实验`;
-        childComponent = <Questionnaire onSubmit={this.onSubmit} />;
+        childComponent = <Questionnaire onQuestionSubmit={this.onQuestionSubmit} />;
         break;
       }
       case 3: {
@@ -290,8 +328,8 @@ export default class App extends PureComponent {
             </div>
             <div>
               <div className="extra">
-                <Statistic title="总累计盈亏" value="" suffix="金币" />
-                <Statistic title="总盈亏率" value="" suffix="%" />
+                <Statistic title="总累计盈亏" value={totalProfit} suffix="金币" />
+                <Statistic title="总盈亏率" value={totalProfitRate} suffix="%" />
               </div>
             </div>
           </div>
@@ -330,7 +368,7 @@ function getExperimentStatus(trades) {
       if (trades.length >= 5) {
         status = 3;
       } else {
-        status = 0;
+        status = 1;
       }
     } else {
       status = 2;
@@ -347,4 +385,38 @@ function getExperimentStatus(trades) {
   return status;
 }
 
-export function calc() {}
+export function calc(trade) {
+  const { stock, buy, sell } = trade;
+  if (
+    !stock
+    || !Array.isArray(buy)
+    || !Array.isArray(sell)
+    || buy.length < 21
+    || sell.length < 21
+  ) {
+    return {};
+  }
+  let cost = 0;
+  let amount = 0;
+  let profit = 0;
+  let position = 0;
+  for (let i = 0; i < buy.length; i += 1) {
+    cost += buy[i] * data[stock][i];
+    amount += buy[i];
+    position += buy[i] - sell[i];
+    profit += sell[i] * data[stock][i];
+  }
+  const averageCost = cost / amount;
+  const balance = 5000 + profit - cost;
+  const marketValue = position * data[stock][19];
+  const totalAsset = balance + marketValue;
+  const totalProfit = totalAsset - 5000;
+  return {
+    averageCost,
+    position,
+    totalProfit,
+    balance,
+    marketValue,
+    totalAsset,
+  };
+}
