@@ -124,7 +124,7 @@ export default class Dashboard extends PureComponent {
       },
       xAxis: {
         boundaryGap: false,
-        data: Array(25).fill('').map((_, index) => `Point ${index - 3}`),
+        data: Array(22).fill('').map((_, index) => `Point ${index}`),
       },
       yAxis: {
         showMinLabel: false,
