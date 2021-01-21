@@ -124,7 +124,7 @@ export default class Dashboard extends PureComponent {
       },
       xAxis: {
         boundaryGap: false,
-        data: Array(24).fill('').map((_, index) => `Point ${index - 3}`),
+        data: Array(25).fill('').map((_, index) => `Point ${index - 3}`),
       },
       yAxis: {
         showMinLabel: false,
@@ -136,7 +136,7 @@ export default class Dashboard extends PureComponent {
         {
           name: '股票价格',
           type: 'line',
-          data: data[stock].slice(0, buy.length + 4),
+          data: data[stock].slice(3, buy.length + 4),
           markPoint: {
             data: [
               { type: 'min', name: '最低值' },

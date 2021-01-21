@@ -1,7 +1,13 @@
 import { Button, Result } from 'antd';
 import React from 'react';
 
-function Finish({ totalProfit }) {
+const mailTo = () => {
+  const mail = document.createElement('a');
+  mail.href = "mailto:jiaxinkuojx@163.com";
+  mail.click();
+}
+
+function Finish({ totalProfit, saveTextAsFile }) {
   return (
     <Result
       status="success"
@@ -9,11 +15,11 @@ function Finish({ totalProfit }) {
       subTitle={[
         <p key="0" />,
         <p key="1">您在五轮实验中，总累计盈亏为：<strong>{totalProfit}</strong>，平均每轮盈亏为：<strong>{+(totalProfit / 5).toFixed(4)}</strong></p>,
-        <p key="2">由于实验局限性，麻烦您手动上传实验数据。</p>
+        <strong key="2">请不要关闭浏览器，也不要关机，请举手示意主试。</strong>
       ]}
       extra={[
-        <Button key="download" type="link">下载实验数据</Button>,
-        <Button key="upload" type="primary">发送实验结果</Button>
+        <Button key="download" type="link" onClick={saveTextAsFile}>下载实验数据</Button>,
+        <Button key="upload" type="primary" onClick={mailTo}>发送实验结果</Button>
       ]}
     />
   );

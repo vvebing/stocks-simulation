@@ -66,9 +66,7 @@ export default class App extends PureComponent {
         return this.setState(nextState);
       }
       const trades = await localForage.getItem('trades') ?? [];
-      const {
-        totalProfit,
-      } = calcProfit(trades);
+      const totalProfit = calcProfit(trades);
       const status = getExperimentStatus(trades);
       this.setState({
         ...nextState,
@@ -178,9 +176,7 @@ export default class App extends PureComponent {
 
   handleNext = () => {
     const { trades } = this.state;
-    const {
-      totalProfit,
-    } = calcProfit(trades);
+    const totalProfit = calcProfit(trades);
     this.setState({
       status: 2,
       totalProfit,
@@ -250,6 +246,15 @@ export default class App extends PureComponent {
     });
   }
 
+  saveTextAsFile = () => {
+    const { uuid, groupID, trades } = this.state;
+    saveTextAsFile({
+      uuid,
+      groupID,
+      trades,
+    }, uuid, groupID);
+  }
+
   render() {
     const {
       loading,
@@ -295,7 +300,7 @@ export default class App extends PureComponent {
       }
       case 3: {
         subTitle = `所有实验已结束`;
-        childComponent = <Finish totalProfit={totalProfit} />;
+        childComponent = <Finish totalProfit={totalProfit} saveTextAsFile={this.saveTextAsFile} />;
         break;
       }
       default:
@@ -432,8 +437,28 @@ function calcProfit(trades) {
     const { totalProfit: profit = 0 } = calc(trades[i], true);
     totalProfit += profit;
   }
-  totalProfit = +totalProfit.toFixed(2);
-  return {
-    totalProfit,
-  };
+  return +totalProfit.toFixed(2);
+}
+
+function saveTextAsFile(data, uuid, groupID) {
+  const fileText = JSON.stringify(data);
+  const fileTextAsBlob = new Blob([fileText], {type: 'text/plain'});
+  const downloadLink = document.createElement('a');
+  downloadLink.download = `stocks-simulation-${uuid}-${groupID}.txt`;
+  downloadLink.innerHTML = 'Download File';
+  if (window.webkitURL !== null) {
+    // Chrome allows the link to be clicked
+    // without actually adding it to the DOM.
+    downloadLink.href = window.webkitURL.createObjectURL(fileTextAsBlob);
+  } else {
+    // Firefox requires the link to be added to the DOM
+    // before it can be clicked.
+    downloadLink.href = window.URL.createObjectURL(fileTextAsBlob);
+    downloadLink.onclick = (event) => {
+      document.body.removeChild(event.target);
+    };
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+  }
+  downloadLink.click();
 }
