@@ -36,8 +36,39 @@ export default class Dashboard extends PureComponent {
       marketValue: marketValue.toFixed(4),    // 股票市值
       totalAsset: totalAsset.toFixed(4),     // 总资产
       maxBuy,
+      trades,
+      next: false,
     };
     this.lineRef = createRef();
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { trades } = nextProps;
+    if (prevState.trades !== trades) {
+      const latestData = trades[trades.length - 1];
+      const {
+        averageCost = 0,
+        position = 0,
+        totalProfit = 0,
+        balance = 0,
+        marketValue = 0,
+        totalAsset = 0,
+        maxBuy = 0,
+      } = calc(latestData);
+      const currentProfit = (data[latestData.stock][latestData.buy.length - 1] - averageCost) * position;
+      return {
+        averageCost: averageCost.toFixed(4),
+        position,
+        currentProfit: currentProfit.toFixed(4),
+        totalProfit: totalProfit.toFixed(4),
+        balance: balance.toFixed(4),
+        marketValue: marketValue.toFixed(4),
+        totalAsset: totalAsset.toFixed(4),
+        maxBuy,
+        trades,
+      };
+    }
+    return null;
   }
 
   componentDidMount() {
@@ -122,19 +153,29 @@ export default class Dashboard extends PureComponent {
     this.setState({ buyValue: +value });
   }
 
+  onBuyBtnMax = () => {
+    this.setState((state) => ({ buyValue: state.maxBuy }));
+  }
+
   onSellInputChange = (value) => {
     this.setState({ sellValue: +value });
   }
 
+  onSellBtnMax = () => {
+    this.setState((state) => ({ sellValue: state.position }));
+  }
+
   onBuyBtnClick = () => {
-    const { buyValue } = this.state;
+    const { buyValue, maxBuy } = this.state;
     if (!buyValue) return message.warning('买入数量需大于零！');
+    if (buyValue > maxBuy) return message.warning(`现金余额最多只能购买${maxBuy}股！`);
     this.tradeConfirm('buy', buyValue, `买入${buyValue}股`);
   }
 
   onSellBtnClick = () => {
-    const { sellValue } = this.state;
+    const { sellValue, position } = this.state;
     if (!sellValue) return message.warning('卖出数量需大于零！');
+    if (sellValue > position) return message.warning(`当前持仓最多只能卖出${position}股！`);
     this.tradeConfirm('sell', sellValue, `卖出${sellValue}股`);
   }
 
@@ -155,16 +196,29 @@ export default class Dashboard extends PureComponent {
       title: `${action}${STOCK[latestData.stock]}股票`,
       content: '是否确认该操作？',
       onOk: () => {
+        this.setState({
+          buyValue: 0,
+          sellValue: 0,
+          next: true,
+        });
         handleTrade(option, amount);
-        this.setState({ buyValue: 0, sellValue: 0 });
       },
     });
   }
+
+  toggleNext = () => {
+    const { trades } = this.props;
+    const latestData = trades[trades.length - 1];
+    this.setState({ next: false, over: latestData.buy.length >= 21 });
+  }
+
+  inputFormatter = (value) => parseInt(value, 10);
 
   render() {
     const { trades, handleNext } = this.props;
     const {
       over,
+      next,
       buyValue,
       sellValue,
       averageCost,
@@ -174,6 +228,7 @@ export default class Dashboard extends PureComponent {
       balance,
       marketValue,
       totalAsset,
+      maxBuy,
     } = this.state;
     const latestData = trades[trades.length - 1] ?? {};
     const { stock, buy } = latestData;
@@ -209,61 +264,92 @@ export default class Dashboard extends PureComponent {
             </Descriptions>
           </div>
           <div className="option">
-            <Row justify="space-around">
-              <Col span={6} className="input-label">买入股票数量</Col>
-              <Col span={8}>
-                <InputNumber
-                  min={0}
-                  max={10}
-                  size="large"
-                  precision={0}
-                  value={buyValue}
-                  formatter={(value) => parseInt(value, 10)}
-                  onChange={this.onBuyInputChange}
-                />
-              </Col>
-              <Col span={6}>
-                <Button
-                  type="primary"
-                  size="large"
-                  block
-                  onClick={this.onBuyBtnClick}
-                >买入</Button>
-              </Col>
-            </Row>
-            <Row justify="space-around">
-              <Col span={6} className="input-label">卖出股票数量</Col>
-              <Col span={8}>
-                <InputNumber
-                  min={0}
-                  max={10}
-                  size="large"
-                  precision={0}
-                  value={sellValue}
-                  formatter={(value) => parseInt(value, 10)}
-                  onChange={this.onSellInputChange}
-                />
-              </Col>
-              <Col span={6}>
-                <Button
-                  type="primary"
-                  size="large"
-                  danger
-                  block
-                  onClick={this.onSellBtnClick}
-                >卖出</Button>
-              </Col>
-            </Row>
-            <Row justify="center">
-              <Col span={12}>
-                <Button
-                  type="primary"
-                  size="large"
-                  block
-                  onClick={this.onKeepBtnClick}
-                >继续持有</Button>
-              </Col>
-            </Row>
+            {
+              next ?
+              <>
+                <Row justify="center">
+                  <Col className="input-label">
+                    本期交易结束，请点击确认进入下一个交易期！
+                  </Col>
+                </Row>
+                <Row justify="center">
+                  <Col span={12}>
+                    <Button
+                      type="primary"
+                      size="large"
+                      block
+                      onClick={this.toggleNext}
+                    >确认</Button>
+                  </Col>
+                </Row>
+              </> :
+              <>
+                <Row justify="space-around">
+                  <Col span={6} className="input-label">买入股票数量</Col>
+                  <Col span={6}>
+                    <InputNumber
+                      min={0}
+                      max={maxBuy}
+                      precision={0}
+                      value={buyValue}
+                      formatter={this.inputFormatter}
+                      onChange={this.onBuyInputChange}
+                    />
+                  </Col>
+                  <Col span={5}>
+                    <Button
+                      type="link"
+                      block
+                      onClick={this.onBuyBtnMax}
+                    >最大值</Button>
+                  </Col>
+                  <Col span={4}>
+                    <Button
+                      type="primary"
+                      block
+                      onClick={this.onBuyBtnClick}
+                    >买入</Button>
+                  </Col>
+                </Row>
+                <Row justify="space-around">
+                  <Col span={6} className="input-label">卖出股票数量</Col>
+                  <Col span={6}>
+                    <InputNumber
+                      min={0}
+                      max={position}
+                      precision={0}
+                      value={sellValue}
+                      formatter={this.inputFormatter}
+                      onChange={this.onSellInputChange}
+                    />
+                  </Col>
+                  <Col span={5}>
+                    <Button
+                      type="link"
+                      block
+                      onClick={this.onSellBtnMax}
+                    >最大值</Button>
+                  </Col>
+                  <Col span={4}>
+                    <Button
+                      type="primary"
+                      danger
+                      block
+                      onClick={this.onSellBtnClick}
+                    >卖出</Button>
+                  </Col>
+                </Row>
+                <Row justify="center">
+                  <Col span={12}>
+                    <Button
+                      type="primary"
+                      block
+                      onClick={this.onKeepBtnClick}
+                    >继续持有</Button>
+                  </Col>
+                </Row>
+              </>
+            }
           </div>
         </div>
       </div>

@@ -14,8 +14,12 @@ function Preparation({ trades, groupID, handleStart }) {
   const [current, setCurrent] = useState(0);
   const next = () => {
     if (current >= 1 && !stock) {
-      current !== 1 && setCurrent(1);
-      return message.warning('请选择一支股票');
+      if (groupID !== 10) {
+        current !== 1 && setCurrent(1);
+        return message.warning('请选择一支股票');
+      }
+      const stocks = Object.keys(STOCK).filter((s) => trades.findIndex((trade) => trade.stock === s) === -1);
+      selectStock(stocks[Math.floor(Math.random() * stocks.length)]);
     }
     if (current >= 3) {
       return handleStart(stock);
@@ -52,17 +56,23 @@ function Preparation({ trades, groupID, handleStart }) {
               <div id="step">
                 <Row justify="space-around">
                   {
-                    Object.entries(STOCK).map(([key, title]) => (
-                      <Col key={key} span={4}>
-                        <Card
-                          title={title}
-                          hoverable
-                          onClick={() => current === 1 && selectStock(key)}
-                        >
-                          <Radio checked={stock === key} disabled={current === 2} />
-                        </Card>
-                      </Col>
-                    ))
+                    Object.entries(STOCK).map(([key, title]) => {
+                      const unselected = trades.findIndex((trade) => trade.stock === key) === -1;
+                      return (
+                        <Col key={key} span={4}>
+                          <Card
+                            title={title}
+                            hoverable
+                            onClick={() => current === 1 && groupID !== 10 && unselected && selectStock(key)}
+                          >
+                            <Radio
+                              checked={stock === key}
+                              disabled={current === 2 || !unselected || groupID === 10}
+                            />
+                          </Card>
+                        </Col>
+                      );
+                    })
                   }
                 </Row>
                 <div className="introduce">
