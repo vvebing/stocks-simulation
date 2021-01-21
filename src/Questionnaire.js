@@ -64,7 +64,7 @@ function Questionnaire({ onQuestionSubmit }) {
               <Radio.Group>
                 {
                   Array(7).fill('').map((_, index) => (
-                    <Radio key={index} value={index}>{index}</Radio>
+                    <Radio key={index} value={index + 1}>{index + 1}</Radio>
                   ))
                 }
               </Radio.Group>

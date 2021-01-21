@@ -1,5 +1,6 @@
 import { Button, Card, Col, Descriptions, message, Radio, Result, Row, Steps, Typography } from 'antd';
 import React, { useState } from 'react';
+import Thumbnail from './Thumbnail.jpg';
 import { STOCK } from './App';
 
 const STEPS = [
@@ -61,14 +62,14 @@ function Preparation({ trades, groupID, handleStart }) {
                       return (
                         <Col key={key} span={4}>
                           <Card
-                            title={title}
                             hoverable
+                            cover={<img alt="Thumbnail" src={Thumbnail} />}
                             onClick={() => current === 1 && groupID !== 10 && unselected && selectStock(key)}
                           >
                             <Radio
                               checked={stock === key}
                               disabled={current === 2 || !unselected || groupID === 10}
-                            />
+                            >{`${title}股票`}</Radio>
                           </Card>
                         </Col>
                       );
@@ -277,7 +278,7 @@ function Preparation({ trades, groupID, handleStart }) {
                   <Typography.Text keyboard>300</Typography.Text>
                   ，以及现金金币
                   <Typography.Text keyboard>2000</Typography.Text>
-                  接下来您还有
+                  。接下来您还有
                   <Typography.Text keyboard>20</Typography.Text>
                   次交易的机会（
                   <Typography.Text keyboard>Point 1</Typography.Text>

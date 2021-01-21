@@ -25,7 +25,6 @@ function Login({ login }) {
         <Form.Item
           label="分组编号"
           name="groupID"
-          tooltip="不同的分组代表不同的投资策略"
           rules={[{ required: true, message: '请选择一个分组' }]}
         >
           <Radio.Group>

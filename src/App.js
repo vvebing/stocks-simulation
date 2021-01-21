@@ -40,15 +40,14 @@ export default class App extends PureComponent {
       /**
        * [{
        *  stock: A | B | C | D | E,
-       *  buy: [],  // length = 21
-       *  sell: [], // length = 21
+       *  buy: [],  // length = 20
+       *  sell: [], // length = 20
        *  mood: [], // length = 5
        * }]
        */
       status: 0,
       error: false,
       totalProfit: 0,
-      totalProfitRate: 0,
     };
   }
 
@@ -69,7 +68,6 @@ export default class App extends PureComponent {
       const trades = await localForage.getItem('trades') ?? [];
       const {
         totalProfit,
-        totalProfitRate,
       } = calcProfit(trades);
       const status = getExperimentStatus(trades);
       this.setState({
@@ -77,7 +75,6 @@ export default class App extends PureComponent {
         trades,
         status,
         totalProfit,
-        totalProfitRate,
       });
     } catch (err) {
       this.setState({
@@ -123,6 +120,7 @@ export default class App extends PureComponent {
           showNotice: true,
           trades: [],
           status: 0,
+          totalProfit: 0,
         });
       },
     });
@@ -139,6 +137,7 @@ export default class App extends PureComponent {
         this.setState({
           trades: [],
           status: 0,
+          totalProfit: 0,
         });
       },
     });
@@ -181,12 +180,10 @@ export default class App extends PureComponent {
     const { trades } = this.state;
     const {
       totalProfit,
-      totalProfitRate,
     } = calcProfit(trades);
     this.setState({
       status: 2,
       totalProfit,
-      totalProfitRate,
     });
   }
 
@@ -198,7 +195,7 @@ export default class App extends PureComponent {
       if (buy.length !== sell.length) {
         return this.setState({ status: -1 });
       }
-      if (buy.length >= 21) {
+      if (buy.length >= 20) {
         if (mood.length < 5) {
           this.setState({ status: 2 });
         } else {
@@ -264,7 +261,6 @@ export default class App extends PureComponent {
       trades,
       status,
       totalProfit,
-      totalProfitRate,
      } = this.state;
 
     if (loading) {
@@ -333,7 +329,6 @@ export default class App extends PureComponent {
             <div>
               <div className="extra">
                 <Statistic title="总累计盈亏" value={totalProfit} suffix="金币" />
-                <Statistic title="总盈亏率" value={totalProfitRate} suffix="%" />
               </div>
             </div>
           </div>
@@ -362,23 +357,21 @@ function getExperimentStatus(trades) {
     sell = [],
     mood = [],
   } = latestData || {};
-  if (
-    !latestData || (
-      buy.length >= 21 ||
-      sell.length >= 21
-    )
+  if (!latestData) {
+    status = 0;
+  } else if (
+    buy.length >= 20 ||
+    sell.length >= 20
   ) {
-    if (mood.length === 0 || mood.length >= 5) {
-      if (trades.length >= 5) {
-        status = 3;
-      } else {
-        status = mood.length === 0 ? 1 : 0;
-      }
-    } else {
+    if (mood.length < 5) {
       status = 2;
+    } else if (trades.length >= 5) {
+      status = 3;
+    } else {
+      status = 0;
     }
   } else if (
-    buy.length < 21 &&
+    buy.length < 20 &&
     buy.length === sell.length &&
     mood.length === 0
   ) {
@@ -395,26 +388,33 @@ export function calc(trade, total = false) {
     !stock
     || !Array.isArray(buy)
     || !Array.isArray(sell)
-    || (total && (buy.length < 21 || sell.length < 21))
+    || (total && (buy.length < 20 || sell.length < 20))
   ) {
     return {};
   }
   let cost = 0;
+  let tCost = 0;
   let amount = 0;
   let profit = 0;
   let position = 0;
   for (let i = 0; i < buy.length; i += 1) {
-    cost += buy[i] * (data[stock][i - 1] ?? 10);
-    amount += buy[i];
+    cost += buy[i] * data[stock][i + 3];
+    if (sell[i] === position && position !== 0) {
+      tCost = 0;
+      amount = 0;
+    } else {
+      tCost += buy[i] * data[stock][i + 3];
+      amount += buy[i];
+    }
     position += buy[i] - sell[i];
-    profit += sell[i] * (data[stock][i - 1] ?? 10);
+    profit += sell[i] * data[stock][i + 3];
   }
-  const averageCost = cost / amount;
   const balance = 5000 + profit - cost;
-  const marketValue = position * data[stock][buy.length - 1];
+  const averageCost = amount <= 0 ? 0 : (tCost / amount);
+  const marketValue = position * data[stock][buy.length + 3];
   const totalAsset = balance + marketValue;
   const totalProfit = totalAsset - 5000;
-  const maxBuy = Math.floor(balance / data[stock][buy.length - 1])
+  const maxBuy = Math.floor(balance / data[stock][buy.length + 3])
   return {
     averageCost,
     position,
@@ -428,16 +428,12 @@ export function calc(trade, total = false) {
 
 function calcProfit(trades) {
   let totalProfit = 0;
-  let totalProfitRate = 0;
   for (let i = 0; i < trades.length; i += 1) {
     const { totalProfit: profit = 0 } = calc(trades[i], true);
     totalProfit += profit;
-    totalProfitRate += (totalProfit / 5000) * 100;
   }
   totalProfit = +totalProfit.toFixed(2);
-  totalProfitRate = totalProfitRate.toFixed(2);
   return {
     totalProfit,
-    totalProfitRate,
   };
 }

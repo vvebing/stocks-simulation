@@ -23,9 +23,9 @@ export default class Dashboard extends PureComponent {
       totalAsset = 0,
       maxBuy = 0,
     } = calc(latestData);
-    const currentProfit = (data[latestData.stock][latestData.buy.length - 1] - averageCost) * position;
+    const currentProfit = (data[latestData.stock][latestData.buy.length + 3] - averageCost) * position;
     this.state = {
-      over: latestData.buy && latestData.buy.length >= 21,
+      over: latestData.buy && latestData.buy.length >= 20,
       buyValue: 0,
       sellValue: 0,
       averageCost: averageCost.toFixed(4),    // 加权成本
@@ -55,7 +55,7 @@ export default class Dashboard extends PureComponent {
         totalAsset = 0,
         maxBuy = 0,
       } = calc(latestData);
-      const currentProfit = (data[latestData.stock][latestData.buy.length - 1] - averageCost) * position;
+      const currentProfit = (data[latestData.stock][latestData.buy.length + 3] - averageCost) * position;
       return {
         averageCost: averageCost.toFixed(4),
         position,
@@ -124,7 +124,7 @@ export default class Dashboard extends PureComponent {
       },
       xAxis: {
         boundaryGap: false,
-        data: Array(24).fill('').map((_, index) => `Point ${index}`),
+        data: Array(24).fill('').map((_, index) => `Point ${index - 3}`),
       },
       yAxis: {
         showMinLabel: false,
@@ -136,7 +136,7 @@ export default class Dashboard extends PureComponent {
         {
           name: '股票价格',
           type: 'line',
-          data: [10, ...data[stock]].slice(0, buy.length + 1),
+          data: data[stock].slice(0, buy.length + 4),
           markPoint: {
             data: [
               { type: 'min', name: '最低值' },
@@ -168,14 +168,20 @@ export default class Dashboard extends PureComponent {
   onBuyBtnClick = () => {
     const { buyValue, maxBuy } = this.state;
     if (!buyValue) return message.warning('买入数量需大于零！');
-    if (buyValue > maxBuy) return message.warning(`现金余额最多只能购买${maxBuy}股！`);
+    if (buyValue > maxBuy) {
+      this.setState({ buyValue: maxBuy });
+      return message.warning(`现金余额最多只能购买${maxBuy}股！`);
+    };
     this.tradeConfirm('buy', buyValue, `买入${buyValue}股`);
   }
 
   onSellBtnClick = () => {
     const { sellValue, position } = this.state;
     if (!sellValue) return message.warning('卖出数量需大于零！');
-    if (sellValue > position) return message.warning(`当前持仓最多只能卖出${position}股！`);
+    if (sellValue > position) {
+      this.setState({ sellValue: position });
+      return message.warning(`当前持仓最多只能卖出${position}股！`);
+    }
     this.tradeConfirm('sell', sellValue, `卖出${sellValue}股`);
   }
 
@@ -186,7 +192,7 @@ export default class Dashboard extends PureComponent {
   tradeConfirm = (option, amount, action) => {
     const { trades, handleTrade } = this.props;
     const latestData = trades[trades.length - 1];
-    if (latestData.buy.length >= 21) {
+    if (latestData.buy.length >= 20) {
       return this.setState({ over: true });
     }
     Modal.confirm({
@@ -209,7 +215,7 @@ export default class Dashboard extends PureComponent {
   toggleNext = () => {
     const { trades } = this.props;
     const latestData = trades[trades.length - 1];
-    this.setState({ next: false, over: latestData.buy.length >= 21 });
+    this.setState({ next: false, over: latestData.buy.length >= 20 });
   }
 
   inputFormatter = (value) => parseInt(value, 10);
@@ -228,7 +234,6 @@ export default class Dashboard extends PureComponent {
       balance,
       marketValue,
       totalAsset,
-      maxBuy,
     } = this.state;
     const latestData = trades[trades.length - 1] ?? {};
     const { stock, buy } = latestData;
@@ -253,7 +258,7 @@ export default class Dashboard extends PureComponent {
         <div className="data">
           <div className="describe">
             <Descriptions bordered column={1} title="资产配置">
-              <Descriptions.Item label="当前股价">{data[stock][buy.length - 1]}</Descriptions.Item>
+              <Descriptions.Item label="当前股价">{data[stock][buy.length + 3]}</Descriptions.Item>
               <Descriptions.Item label="成本">{+averageCost}</Descriptions.Item>
               <Descriptions.Item label="持仓">{position}</Descriptions.Item>
               <Descriptions.Item label="当前盈亏">{+currentProfit}</Descriptions.Item>
@@ -269,7 +274,11 @@ export default class Dashboard extends PureComponent {
               <>
                 <Row justify="center">
                   <Col className="input-label">
-                    本期交易结束，请点击确认进入下一个交易期！
+                    {
+                      latestData.buy.length >= 20 ?
+                      '本轮交易任务结束，点击确认查看本轮交易信息。' :
+                      '本期交易结束，请点击确认进入下一个交易期！'
+                    }
                   </Col>
                 </Row>
                 <Row justify="center">
@@ -288,8 +297,6 @@ export default class Dashboard extends PureComponent {
                   <Col span={6} className="input-label">买入股票数量</Col>
                   <Col span={6}>
                     <InputNumber
-                      min={0}
-                      max={maxBuy}
                       precision={0}
                       value={buyValue}
                       formatter={this.inputFormatter}
@@ -315,8 +322,6 @@ export default class Dashboard extends PureComponent {
                   <Col span={6} className="input-label">卖出股票数量</Col>
                   <Col span={6}>
                     <InputNumber
-                      min={0}
-                      max={position}
                       precision={0}
                       value={sellValue}
                       formatter={this.inputFormatter}
