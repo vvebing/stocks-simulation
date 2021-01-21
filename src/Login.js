@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Input, Radio, Space, Tooltip } from 'antd';
+import { Button, Form, Input, Radio, Space } from 'antd';
 
 function Login({ login }) {
   const [form] = Form.useForm();
@@ -29,21 +29,9 @@ function Login({ login }) {
           rules={[{ required: true, message: '请选择一个分组' }]}
         >
           <Radio.Group>
-            <Radio value={10}>
-              <Tooltip title="系统将自动帮被试买入价值3000金币的任一（系统随机）种股票">
-                他人购买组
-              </Tooltip>
-            </Radio>
-            <Radio value={20}>
-              <Tooltip title="被试需要选择甲乙丙丁戊中的一只股票，并且一次性买入300股">
-                自己购买组
-              </Tooltip>
-            </Radio>
-            <Radio value={30}>
-              <Tooltip title="被试需要选择甲乙丙丁戊中的一只股票，并且一次性买入300股">
-                他人建议下自己购买组
-              </Tooltip>
-            </Radio>
+            <Radio value={10}>10</Radio>
+            <Radio value={20}>20</Radio>
+            <Radio value={30}>30</Radio>
           </Radio.Group>
         </Form.Item>
         <Form.Item
