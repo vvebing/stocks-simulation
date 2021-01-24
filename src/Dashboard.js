@@ -218,7 +218,7 @@ export default class Dashboard extends PureComponent {
     this.setState({ next: false, over: latestData.buy.length >= 20 });
   }
 
-  inputFormatter = (value) => parseInt(value, 10);
+  inputFormatter = (value) => parseInt(value, 10) || 0;
 
   render() {
     const { trades, handleNext } = this.props;
@@ -293,10 +293,12 @@ export default class Dashboard extends PureComponent {
                 </Row>
               </> :
               <>
-                <Row justify="space-around">
+                <Row justify="space-between">
                   <Col span={6} className="input-label">买入股票数量</Col>
-                  <Col span={6}>
+                  <Col span={4}>
                     <InputNumber
+                      min={0}
+                      step={1}
                       precision={0}
                       value={buyValue}
                       formatter={this.inputFormatter}
@@ -310,7 +312,7 @@ export default class Dashboard extends PureComponent {
                       onClick={this.onBuyBtnMax}
                     >最大值</Button>
                   </Col>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Button
                       type="primary"
                       block
@@ -318,10 +320,12 @@ export default class Dashboard extends PureComponent {
                     >买入</Button>
                   </Col>
                 </Row>
-                <Row justify="space-around">
+                <Row justify="space-between">
                   <Col span={6} className="input-label">卖出股票数量</Col>
-                  <Col span={6}>
+                  <Col span={4}>
                     <InputNumber
+                      min={0}
+                      step={1}
                       precision={0}
                       value={sellValue}
                       formatter={this.inputFormatter}
@@ -335,7 +339,7 @@ export default class Dashboard extends PureComponent {
                       onClick={this.onSellBtnMax}
                     >最大值</Button>
                   </Col>
-                  <Col span={4}>
+                  <Col span={6}>
                     <Button
                       type="primary"
                       danger
@@ -344,8 +348,8 @@ export default class Dashboard extends PureComponent {
                     >卖出</Button>
                   </Col>
                 </Row>
-                <Row justify="center">
-                  <Col span={12}>
+                <Row justify="end">
+                  <Col span={6}>
                     <Button
                       type="primary"
                       block

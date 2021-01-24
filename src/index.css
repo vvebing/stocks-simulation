@@ -31,7 +31,7 @@ body {
 
 #login .ant-form {
   margin: 0 auto;
-  max-width: 800px;
+  max-width: 500px;
 }
 
 #main {
@@ -41,20 +41,6 @@ body {
   max-width: 800px;
   display: flex;
   flex-direction: column;
-}
-
-#main .content {
-  display: flex;
-}
-
-#main .extra {
-  display: flex;
-  width: max-content;
-  justify-content: flex-end;
-}
-
-#main .extra .ant-statistic:first-of-type {
-  margin-right: 32px;
 }
 
 #main .ant-form {
@@ -111,6 +97,11 @@ body {
 #dashboard .option .input-label {
   font-size: 14px;
   line-height: 32px;
+  margin-left: 10px;
+}
+
+#dashboard .option .ant-input-number {
+  width: 75px;
 }
 
 @media (max-width: 575px) {

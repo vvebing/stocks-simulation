@@ -35,14 +35,14 @@ const QUESTION = [
 ];
 
 function Questionnaire({ onQuestionSubmit }) {
-  const [form] = Form.useForm();
-  const onReset = () => {
-    form.resetFields();
-  };
+  // const [form] = Form.useForm();
+  // const onReset = () => {
+  //   form.resetFields();
+  // };
 
   return (
     <Form
-      form={form}
+      // form={form}
       layout="vertical"
       onFinish={onQuestionSubmit}
     >
@@ -78,9 +78,9 @@ function Questionnaire({ onQuestionSubmit }) {
           <Button type="primary" htmlType="submit">
             确定
           </Button>
-          <Button htmlType="reset" onClick={onReset}>
+          {/* <Button htmlType="reset" onClick={onReset}>
             重置
-          </Button>
+          </Button> */}
         </Space>
       </Form.Item>
     </Form>

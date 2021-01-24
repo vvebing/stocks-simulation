@@ -3,10 +3,11 @@ import localForage from 'localforage';
 import {
   Button,
   Descriptions,
+  Input,
+  message,
   Modal,
   PageHeader,
   Skeleton,
-  Statistic,
 } from 'antd';
 
 import data from './data.json';
@@ -26,6 +27,7 @@ export const STOCK = {
   D: '丁',
   E: '戊',
 };
+const CLEAR_PASSWORD = 'stocks-simulation';
 
 export default class App extends PureComponent {
   constructor(props) {
@@ -49,6 +51,7 @@ export default class App extends PureComponent {
       error: false,
       totalProfit: 0,
     };
+    this.clearPassword = null;
   }
 
   async componentDidMount() {
@@ -108,8 +111,16 @@ export default class App extends PureComponent {
       okText: '确定',
       cancelText: '取消',
       title: '是否清除用户数据？',
-      content: '清除用户数据后也将会清除实验数据！请谨慎操作！',
+      content: [
+        <p key="text">清除用户数据后也将会清除实验数据！请谨慎操作！</p>,
+        <p key="password">请主试输入密码：<Input.Password onChange={(event) => {this.clearPassword = event.target.value}} /></p>,
+      ],
       onOk: async () => {
+        if (this.clearPassword !== CLEAR_PASSWORD) {
+          message.warning('主试权限才能清除用户数据！');
+          return;
+        }
+
         await localForage.clear();
         this.setState({
           uuid: '',
@@ -129,8 +140,16 @@ export default class App extends PureComponent {
       okText: '确定',
       cancelText: '取消',
       title: '是否清除实验数据',
-      content: '清除实验数据后，您需要重新操作！请谨慎操作！',
+      content: [
+        <p key="text">清除实验数据后，您需要重新操作！请谨慎操作！</p>,
+        <p key="password">请主试输入密码：<Input.Password onChange={(event) => {this.clearPassword = event.target.value}} /></p>,
+      ],
       onOk: async () => {
+        if (this.clearPassword !== CLEAR_PASSWORD) {
+          message.warning('主试权限才能清除实验数据！');
+          return;
+        }
+
         await localForage.removeItem('trades');
         this.setState({
           trades: [],
@@ -320,22 +339,15 @@ export default class App extends PureComponent {
           ]}
         >
           <div className="content">
-            <div className="main">
-              <Descriptions size="small" column={2}>
-                <Descriptions.Item label="被试编号">
-                  {uuid}
-                </Descriptions.Item>
-                <br />
-                <Descriptions.Item label="分组编号">
-                  {groupID}
-                </Descriptions.Item>
-              </Descriptions>
-            </div>
-            <div>
-              <div className="extra">
-                <Statistic title="总累计盈亏" value={totalProfit} suffix="金币" />
-              </div>
-            </div>
+            <Descriptions size="small" column={2}>
+              <Descriptions.Item label="被试编号">
+                {uuid}
+              </Descriptions.Item>
+              <br />
+              <Descriptions.Item label="分组编号">
+                {groupID}
+              </Descriptions.Item>
+            </Descriptions>
           </div>
         </PageHeader>
         {childComponent}

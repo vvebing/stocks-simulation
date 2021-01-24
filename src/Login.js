@@ -9,10 +9,11 @@ function Login({ login }) {
 
   return (
     <div id="login">
+      <h1 style={{textAlign: 'center'}}>模拟股票交易系统</h1>
       <Form
         form={form}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 12 }}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 18 }}
         onFinish={login}
       >
         <Form.Item
@@ -34,7 +35,7 @@ function Login({ login }) {
           </Radio.Group>
         </Form.Item>
         <Form.Item
-          wrapperCol={{ offset: 4, span: 12 }}
+          wrapperCol={{ offset: 6, span: 12 }}
         >
           <Space>
             <Button type="primary" htmlType="submit">
