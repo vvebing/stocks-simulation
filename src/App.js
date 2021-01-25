@@ -255,7 +255,7 @@ export default class App extends PureComponent {
     const newTrades = trades.slice();
     newTrades.splice(-1, 1, {
       ...latestData,
-      mood: Array.from({ length: 5, ...data }),
+      mood: Array.from({ length: 9, ...data }),
     });
     this.setState({
       trades: newTrades,
