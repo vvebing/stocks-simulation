@@ -51,7 +51,7 @@ export default class App extends PureComponent {
       error: false,
       totalProfit: 0,
     };
-    this.clearPassword = null;
+    this.clearPassword = '';
   }
 
   async componentDidMount() {
@@ -120,6 +120,7 @@ export default class App extends PureComponent {
           message.warning('主试权限才能清除用户数据！');
           return;
         }
+        this.clearPassword = '';
 
         await localForage.clear();
         this.setState({
@@ -149,6 +150,7 @@ export default class App extends PureComponent {
           message.warning('主试权限才能清除实验数据！');
           return;
         }
+        this.clearPassword = '';
 
         await localForage.removeItem('trades');
         this.setState({
