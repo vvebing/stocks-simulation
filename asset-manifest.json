@@ -16,8 +16,8 @@
     "static/js/4.74c6e088.chunk.js": "/stocks-simulation/static/js/4.74c6e088.chunk.js",
     "static/js/4.74c6e088.chunk.js.map": "/stocks-simulation/static/js/4.74c6e088.chunk.js.map",
     "main.css": "/stocks-simulation/static/css/main.0fc4d56f.chunk.css",
-    "main.js": "/stocks-simulation/static/js/main.fc3988d8.chunk.js",
-    "main.js.map": "/stocks-simulation/static/js/main.fc3988d8.chunk.js.map",
+    "main.js": "/stocks-simulation/static/js/main.766c74ed.chunk.js",
+    "main.js.map": "/stocks-simulation/static/js/main.766c74ed.chunk.js.map",
     "runtime-main.js": "/stocks-simulation/static/js/runtime-main.865bb255.js",
     "runtime-main.js.map": "/stocks-simulation/static/js/runtime-main.865bb255.js.map",
     "static/js/7.fe397fe6.chunk.js": "/stocks-simulation/static/js/7.fe397fe6.chunk.js",
@@ -67,6 +67,6 @@
     "static/css/8.9a3a31ba.chunk.css",
     "static/js/8.d4382ef8.chunk.js",
     "static/css/main.0fc4d56f.chunk.css",
-    "static/js/main.fc3988d8.chunk.js"
+    "static/js/main.766c74ed.chunk.js"
   ]
 }
