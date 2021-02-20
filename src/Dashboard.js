@@ -351,10 +351,10 @@ export default class Dashboard extends PureComponent {
                 <Row justify="end">
                   <Col span={6}>
                     <Button
-                      type="primary"
                       block
+                      className="keep-btn"
                       onClick={this.onKeepBtnClick}
-                    >继续持有</Button>
+                    >持仓不变</Button>
                   </Col>
                 </Row>
               </>

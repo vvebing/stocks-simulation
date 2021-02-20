@@ -27,7 +27,7 @@ export const STOCK = {
   D: '丁',
   E: '戊',
 };
-const CLEAR_PASSWORD = 'stocks-simulation';
+const CLEAR_PASSWORD = '981107';
 
 export default class App extends PureComponent {
   constructor(props) {
@@ -44,7 +44,7 @@ export default class App extends PureComponent {
        *  stock: A | B | C | D | E,
        *  buy: [],  // length = 20
        *  sell: [], // length = 20
-       *  mood: [], // length = 5
+       *  mood: [], // length = 4
        * }]
        */
       status: 0,
@@ -213,7 +213,7 @@ export default class App extends PureComponent {
         return this.setState({ status: -1 });
       }
       if (buy.length >= 20) {
-        if (mood.length < 5) {
+        if (mood.length < 4) {
           this.setState({ status: 2 });
         } else {
           this.setState({ status: 3 });
@@ -246,7 +246,7 @@ export default class App extends PureComponent {
     }
   }
 
-  onQuestionSubmit = (data) => {
+  onQuestionSubmit = (mood) => {
     const { trades } = this.state;
     const latestData = trades[trades.length - 1];
     if (!latestData) {
@@ -257,7 +257,7 @@ export default class App extends PureComponent {
     const newTrades = trades.slice();
     newTrades.splice(-1, 1, {
       ...latestData,
-      mood: Array.from({ length: 9, ...data }),
+      mood,
     });
     this.setState({
       trades: newTrades,
@@ -303,7 +303,8 @@ export default class App extends PureComponent {
 
     let subTitle = '';
     let childComponent = null;
-    switch(status) {
+    const tempStatus = status;
+    switch(tempStatus) {
       case 0: {
         subTitle = `即将开始第${trades.length + 1}轮实验`;
         childComponent = <Preparation trades={trades} groupID={groupID} handleStart={this.handleStart} />;
@@ -316,7 +317,7 @@ export default class App extends PureComponent {
       }
       case 2: {
         subTitle = `已结束第${trades.length}轮实验`;
-        childComponent = <Questionnaire onQuestionSubmit={this.onQuestionSubmit} />;
+        childComponent = <Questionnaire groupID={groupID} onQuestionSubmit={this.onQuestionSubmit} />;
         break;
       }
       case 3: {
@@ -382,7 +383,7 @@ function getExperimentStatus(trades) {
     buy.length >= 20 ||
     sell.length >= 20
   ) {
-    if (mood.length < 5) {
+    if (mood.length < 4) {
       status = 2;
     } else if (trades.length >= 5) {
       status = 3;

@@ -86,7 +86,9 @@ function Preparation({ trades, groupID, handleStart }) {
                             <Typography.Text keyboard>Point0</Typography.Text>
                             。市场上有“甲、乙、丙、丁、戊”五只股票，这五只股票在
                             <Typography.Text keyboard>Point0</Typography.Text>
-                            前期走势相似，但是后期的上涨潜力可能不同。
+                            前期走势相似，当前股价均为
+                            <Typography.Text keyboard>10</Typography.Text>
+                            金币，但是后期的上涨概率可能不同。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
                             您只能
@@ -114,7 +116,9 @@ function Preparation({ trades, groupID, handleStart }) {
                                 <Typography.Text keyboard>Point0</Typography.Text>
                                 。市场上有“甲、乙、丙、丁、戊”五只股票，这五只股票在
                                 <Typography.Text keyboard>Point0</Typography.Text>
-                                前期走势相似，但是后期的上涨潜力可能不同。
+                                前期走势相似，当前股价均为
+                                <Typography.Text keyboard>10</Typography.Text>
+                                金币，但是后期的上涨概率可能不同。
                               </Typography.Paragraph>
                               <Typography.Paragraph>
                                 您只能
@@ -157,7 +161,9 @@ function Preparation({ trades, groupID, handleStart }) {
                                 <Typography.Paragraph>
                                   这五只股票在
                                   <Typography.Text keyboard>Point0</Typography.Text>
-                                  前期走势相似，但是后期的上涨潜力可能不同。
+                                  前期走势相似，当前股价均为
+                                  <Typography.Text keyboard>10</Typography.Text>
+                                  金币，但是后期的上涨概率可能不同。
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
                                   您只能
@@ -247,7 +253,7 @@ function Preparation({ trades, groupID, handleStart }) {
                 {
                   current === 1 ?
                   <Descriptions bordered column={1} title="资产配置">
-                    <Descriptions.Item label="当前股价">（5只股票均为）10</Descriptions.Item>
+                    <Descriptions.Item label="当前股价">10</Descriptions.Item>
                     <Descriptions.Item label="成本">0</Descriptions.Item>
                     <Descriptions.Item label="持仓">0</Descriptions.Item>
                     <Descriptions.Item label="当前盈亏">0</Descriptions.Item>
@@ -284,7 +290,7 @@ function Preparation({ trades, groupID, handleStart }) {
                   <Typography.Text keyboard>Point 1</Typography.Text>
                   ～
                   <Typography.Text keyboard>Point 20</Typography.Text>
-                  ），股票的价格变化是随机的。
+                  ）。
                 </Typography.Title>
                 <Typography.Title level={5}>
                     点击确认进入正式交易任务。

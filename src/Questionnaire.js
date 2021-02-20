@@ -1,191 +1,180 @@
-import { Button, Col, Form, InputNumber, Radio, Row, Slider, Space } from 'antd';
+import { Button, Col, Form, message, Radio, Row } from 'antd';
 import React, { useState } from 'react';
 
-const QUESTION = [
-  {
-    key: '3',
-    lowPoint: '非常不失望',
-    highPoint: '非常失望',
-    label: '4. 在本轮任务中，您对自己的错误决策感到[单选题]',
-  },
-  {
-    key: '4',
-    lowPoint: '非常不后悔',
-    highPoint: '非常后悔',
-    label: '5. 在本轮任务中，您对自己的错误决策感到[单选题]',
-  },
-  {
-    key: '5',
-    lowPoint: '非常不满意',
-    highPoint: '非常满意',
-    label: '6. 在本轮任务中，您对自己的正确决策感到[单选题]',
-  },
-  {
-    key: '6',
-    lowPoint: '非常不自豪',
-    highPoint: '非常自豪',
-    label: '7. 在本轮任务中，您对自己的正确决策感到[单选题]',
-  },
-  {
-    key: '7',
-    lowPoint: '完全没有责任',
-    highPoint: '负有完全责任',
-    label: '8. 在本轮任务中，如果作出了错误决策，您认为您对错误的交易决策负有多大的责任？[单选题]',
-  },
-  {
-    key: '8',
-    lowPoint: '压力非常小',
-    highPoint: '压力非常大',
-    label: '9. 在本轮任务中，您在做决定时承担了多大的决策压力？[单选题]',
-  },
-];
+const TABLE = [{
+  key: '1',
+  title: '1. 在本轮任务中，对于投资顾问购买/您自己购买/投资顾问推荐下您自己购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+  head: [
+    '',
+    '非常不自豪',
+    '比较不自豪',
+    '有一点不自豪',
+    '不确定',
+    '有一点自豪',
+    '比较自豪',
+    '非常自豪',
+  ],
+  columns: [
+    '股价上涨后卖出，下一交易期股价下跌',
+    '股价上涨后持仓不变/买入，下一交易期股价上涨',
+    '股价下跌后持仓不变/买入，下一交易期股价上涨',
+    '股价下跌后卖出，下一交易期股价下跌',
+    '股价上涨后卖出，下一交易期股价上涨',
+    '股价上涨后持仓不变/买入，下一交易期股价下跌',
+    '股价下跌后持仓不变/买入，下一交易期股价下跌',
+    '股价下跌后卖出，下一交易期股价上涨',
+  ],
+}, {
+  key: '2',
+  title: '2. 在本轮任务中，对于投资顾问购买/您自己购买/投资顾问推荐下您自己购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+  head: [
+    '',
+    '非常不后悔',
+    '比较不后悔',
+    '有一点不后悔',
+    '不确定',
+    '有一点后悔',
+    '比较后悔',
+    '非常后悔',
+  ],
+  columns: [
+    '股价上涨后卖出，下一交易期股价上涨',
+    '股价上涨后持仓不变/买入，下一交易期股价下跌',
+    '股价下跌后持仓不变/买入，下一交易期股价下跌',
+    '股价下跌后卖出，下一交易期股价上涨',
+    '股价上涨后卖出，下一交易期股价下跌',
+    '股价上涨后持仓不变/买入，下一交易期股价上涨',
+    '股价下跌后持仓不变/买入，下一交易期股价上涨',
+    '股价下跌后卖出，下一交易期股价下跌',
+  ],
+}];
+const OPTION = [{
+  key: '3',
+  lowPoint: '压力非常小',
+  highPoint: '压力非常大',
+  10: '3. 在本轮任务中，您在卖出投资顾问购买的300股XX股票时有多大压力？',
+  20: '3. 在本轮任务中，您在卖出最开始自己选择并购买的300股XX股票时有多大压力？',
+  30: '3. 在本轮任务中，您在卖出别人推荐下自己选择并购买的300股XX股票时有多大压力？',
+}, {
+  key: '4',
+  lowPoint: '完全没有责任',
+  highPoint: '负有完全责任',
+  10: '4. 在本轮任务中，若卖出投资顾问购买的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
+  20: '4. 在本轮任务中，若卖出最开始自己选择并购买的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
+  30: '4. 在本轮任务中，您在卖出别人推荐下自己选择并购买的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
+}];
 
-function Questionnaire({ onQuestionSubmit }) {
-  const [wrong, toggleWrong] = useState();
-  const [right, toggleRight] = useState();
-  const [wrongDec, changeWrongDec] = useState(100);
-
-  // const [form] = Form.useForm();
-  // const onReset = () => {
-  //   form.resetFields();
-  // };
-
-  const onDecChange = (value) => {
-    if (!Number.isNaN(parseInt(value, 10))) {
-      changeWrongDec(parseInt(value, 10));
-    } else {
-      changeWrongDec(0);
+function Questionnaire({ groupID, onQuestionSubmit }) {
+  const [form] = Form.useForm();
+  const [tableArray, toggleTable] = useState([[], []]);
+  const [optionArray, toggleOption] = useState([]);
+  const changeTable = (num, index, value) => {
+    if (!tableArray[num][index] || +tableArray[num][index] !== value) {
+      const tempTable = tableArray.slice();
+      tempTable[num][index] = value;
+      toggleTable(tempTable);
     }
   };
-
-  const onRightDecChange = (value) => {
-    if (!Number.isNaN(parseInt(value, 10))) {
-      changeWrongDec(100 - parseInt(value, 10));
-    } else {
-      changeWrongDec(100);
+  const changeOption = (num, value) => {
+    if (!optionArray[num] || +optionArray[num] !== value) {
+      const tempOption = optionArray.slice();
+      tempOption[num] = value;
+      toggleOption(tempOption);
     }
+  };
+  const checkAndSubmit = () => {
+    for (let i = 0; i < tableArray.length; i += 1) {
+      if (!tableArray[i].length) {
+        return message.warning(`请完成第${i + 1}题！`);
+      }
+      if (tableArray[i].length < 8) {
+        return message.warning(`第${i + 1}题第${tableArray[i].length + 1}个选项为必填项！`);
+      }
+      for (let j = 0; j < tableArray[i].length; j += 1) {
+        if (!tableArray[i][j]) {
+          return message.warning(`第${i + 1}题第${j + 1}个选项为必填项！`);
+        }
+      }
+    }
+    form.submit();
   };
 
   return (
     <Form
-      // form={form}
+      form={form}
+      id="question"
       layout="vertical"
-      style={{ height: '932px' }}
-      onFinish={(data) => onQuestionSubmit({...data, '2': wrongDec})}
+      onFinish={() => onQuestionSubmit([tableArray, ...optionArray])}
     >
-      <Form.Item
-        label="1. 请问您在本轮实验中，是否有做过错误的决策？[单选题]"
-        name="0"
-        rules={[{ required: true, message: '该项为必填项' }]}
-      >
-        <Space>
-          <Radio.Group value={wrong} onChange={(e) => {toggleWrong(e.target.value)}}>
-            <Radio value={1}>有</Radio>
-            <Radio value={0}>没有</Radio>
-          </Radio.Group>
-        </Space>
-      </Form.Item>
-      <Form.Item
-        label="2. 请问您在本轮实验中，是否有做过正确的决策？[单选题]"
-        name="1"
-        rules={[{ required: true, message: '该项为必填项' }]}
-      >
-        <Space>
-          <Radio.Group value={right} onChange={(e) => {toggleRight(e.target.value)}}>
-            <Radio value={1}>有</Radio>
-            <Radio value={0}>没有</Radio>
-          </Radio.Group>
-        </Space>
-      </Form.Item>
-      <Form.Item
-        label="3. 请拖动滑动条输入您认为在本轮任务中，您作出的错误决策与正确决策的比例。[比重题]"
-      >
-        <Row style={{ alignItems: 'center' }}>
-          <Col span={2}>错误决策</Col>
-          <Col span={12} style={{ margin: '0 20px' }}>
-            <Slider
-              min={0}
-              max={100}
-              marks={{
-                0: 0,
-                20: 20,
-                40: 40,
-                60: 60,
-                80: 80,
-                100: 100,
-              }}
-              value={wrongDec}
-              onChange={onDecChange}
-            />
-          </Col>
-          <Col span={4}>
-            <InputNumber min={0} max={100} value={wrongDec} onChange={onDecChange} />
-          </Col>
-        </Row>
-      </Form.Item>
-      <Row style={{ margin: '-60px 0 24px', alignItems: 'center' }}>
-        <Col span={2}>正确决策</Col>
-        <Col span={12} style={{ margin: '0 20px' }}>
-          <Slider
-            min={0}
-            max={100}
-            value={100 - wrongDec}
-            marks={{
-              0: 0,
-              20: 20,
-              40: 40,
-              60: 60,
-              80: 80,
-              100: 100,
-            }}
-            onChange={onRightDecChange}
-          />
-        </Col>
-        <Col span={4}>
-          <InputNumber min={0} max={100} value={100 - wrongDec} onChange={onRightDecChange} />
-        </Col>
-      </Row>
       {
-        QUESTION.map(({
-          key,
-          lowPoint,
-          highPoint,
-          label,
-        }, index) => {
-          if ((wrong === undefined || +wrong === 0) && (index === 0 || index === 1)) return null;
-          if ((right === undefined || +right === 0) && (index === 2 || index === 3)) return null;
-
-          return (
-            <Form.Item
-              key={key}
-              label={label}
-              name={key}
-              rules={[{ required: true, message: '该项为必填项' }]}
-            >
-              <Space>
-                <span>{lowPoint}</span>
-                <Radio.Group>
+        TABLE.map((table, num) => (
+          <Form.Item
+            key={table.key}
+            label={table.title}
+            style={{ flexDirection: 'unset' }}
+          >
+            <Row gutter={[8, 16]} className="question-head">
+              {
+                table.head.map((title, index) => (
+                  <Col key={index} span={3} className="question-radio">{title}</Col>
+                ))
+              }
+            </Row>
+            {
+              table.columns.map((column, idx) => (
+                <Row key={idx} gutter={[8, 16]} className="question-column">
+                  <Col span={3}>{column}</Col>
                   {
                     Array(7).fill('').map((_, index) => (
-                      <Radio key={index} value={index + 1}>{index + 1}</Radio>
+                      <Col key={index} span={3} className="question-radio">
+                        <Radio
+                          value={index + 1}
+                          checked={tableArray[num][idx] && +tableArray[num][idx] === index + 1}
+                          onClick={() => changeTable(num, idx, index + 1)}
+                        />
+                      </Col>
                     ))
                   }
-                </Radio.Group>
-                <span>{highPoint}</span>
-              </Space>
-            </Form.Item>
-          );
-        })
+                </Row>
+              ))
+            }
+          </Form.Item>
+        ))
+      }
+      {
+        OPTION.map((option, num) => (
+          <Form.Item
+            key={option.key}
+            name={option.key}
+            label={option[groupID]}
+            style={{ flexDirection: 'unset' }}
+            rules={[
+              { required: true, message: '该项为必选项' }
+            ]}
+          >
+            <Row gutter={[8, 16]} wrap={false}>
+              <Col span={3}>{option.lowPoint}</Col>
+                {
+                  Array(7).fill('').map((_, index) => (
+                    <Col key={index} span={3} className="question-radio">
+                      <Radio
+                        value={index + 1}
+                        checked={optionArray[num] && +optionArray[num] === index + 1}
+                        onClick={() => changeOption(num, index + 1)}
+                      >{index + 1}</Radio>
+                    </Col>
+                  ))
+                }
+              <Col span={3}>{option.highPoint}</Col>
+            </Row>
+          </Form.Item>
+        ))
       }
       <Form.Item>
-        <Space>
-          <Button type="primary" htmlType="submit">
-            确定
-          </Button>
-          {/* <Button htmlType="reset" onClick={onReset}>
-            重置
-          </Button> */}
-        </Space>
+        <Button
+          type="primary"
+          onClick={checkAndSubmit}
+        >确定</Button>
       </Form.Item>
     </Form>
   );

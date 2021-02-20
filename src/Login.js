@@ -9,7 +9,7 @@ function Login({ login }) {
 
   return (
     <div id="login">
-      <h1 style={{textAlign: 'center'}}>模拟股票交易系统</h1>
+      <h1 className="title">模拟股票交易系统</h1>
       <Form
         form={form}
         labelCol={{ span: 6 }}

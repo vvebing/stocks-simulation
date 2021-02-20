@@ -24,6 +24,14 @@ body {
   width: 100%;
 }
 
+#login .title {
+  font-size: 2.5em;
+  color: #739EEF;
+  text-align: center;
+  margin-bottom: 1.5em;
+  text-shadow: 1px 1px 1px #2A65DA;
+}
+
 #notice {
   height: 450px;
   overflow-y: scroll;
@@ -90,6 +98,12 @@ body {
   justify-content: center;
 }
 
+#dashboard .option .keep-btn {
+  color: #FFFFFF;
+  border-color: transparent;
+  background-color: #D4B106;
+}
+
 #dashboard .option .ant-row:not(:last-of-type) {
   margin-bottom: 24px;
 }
@@ -102,6 +116,22 @@ body {
 
 #dashboard .option .ant-input-number {
   width: 75px;
+}
+
+#question .question-radio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#question .question-head {
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(181, 200, 234, 0.7);
+}
+
+#question .question-column:nth-of-type(2n + 1) {
+  background-color: rgba(181, 200, 234, 0.3);
 }
 
 @media (max-width: 575px) {

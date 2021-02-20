@@ -22,6 +22,7 @@ function Notice({ visible, noticed, onCancel }) {
     <Modal
       title="实验须知"
       centered
+      width="75%"
       closable={noticed}
       keyboard={noticed}
       maskClosable={noticed}
@@ -91,13 +92,13 @@ function Notice({ visible, noticed, onCancel }) {
               <li>
                 <Space>
                   <Text strong>当前盈亏</Text>
-                  即您对该股票当前持有份额产生的浮动盈亏
+                  即您当前所持有的股票份额所产生的浮动盈亏
                 </Space>
               </li>
               <li>
                 <Space>
                   <Text strong>总盈亏</Text>
-                  累计盈亏，包括已卖出的部分
+                  累计盈亏，即当前盈亏 + 前期卖出部分的盈亏
                 </Space>
               </li>
               <li>
