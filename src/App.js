@@ -143,6 +143,7 @@ export default class App extends PureComponent {
           showNotice: true,
           trades: [],
           status: 0,
+          practice: {},
           totalProfit: 0,
         });
       },
@@ -530,17 +531,17 @@ function calcFinalData(rawData, uuid, groupID) {
       const trial = {
         'Buy': buy[j],  // 每个 trial 买入的股票数量
         'Sell': sell[j],  // 每个 trial 卖出的股票数量
-        'Current Stock Price': data[stock][j + 3],  // 当前股价
+        'Current Stock Price': data[stock][j + 4],  // 当前股价
         'Weighted Average Purchase Price': averageCost, // 加权平均买入价
         'Position': position, // 持仓
-        'Current Profit': (data[stock][j + 3] - averageCost) * position,  // 当前盈亏
+        'Current Profit': (data[stock][j + 4] - averageCost) * position,  // 当前盈亏
         'Total Profit': totalProfit,  // 总盈亏
         'Market Value': marketValue,  // 股票总市值
       };
       if (sell[j] > 0) {
-        const diff = data[stock][j + 3] - averageCost;
+        const diff = data[stock][j + 4] - averageCost;
         sellPriceSubAverageCost.push(diff);
-        trial['The Difference Between The Sell Price And The Weighted Average Purchase Price'] = diff;  // 卖出价与加权平均买入价的差值
+        trial['The Diff Of SP-WAPP'] = diff;  // 卖出价与加权平均买入价的差值
         if (j > 0) {
           if (sell[j] > sell[j - 1]) {
             sellAfterRise += sell[j];
