@@ -12,7 +12,7 @@ import { calc, STOCK } from './App';
 export default class Dashboard extends PureComponent {
   constructor(props) {
     super(props);
-    const { trades } = props;
+    const { trades, principal = 5000, trials = 20 } = props;
     const latestData = trades[trades.length - 1] || {};
     const {
       averageCost = 0,
@@ -22,10 +22,10 @@ export default class Dashboard extends PureComponent {
       marketValue = 0,
       totalAsset = 0,
       maxBuy = 0,
-    } = calc(latestData);
+    } = calc(latestData, principal);
     const currentProfit = (data[latestData.stock][latestData.buy.length + 3] - averageCost) * position;
     this.state = {
-      over: latestData.buy && latestData.buy.length >= 20,
+      over: latestData.buy && latestData.buy.length >= trials,
       buyValue: 0,
       sellValue: 0,
       averageCost: averageCost.toFixed(4),    // 加权成本
@@ -43,7 +43,7 @@ export default class Dashboard extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const { trades } = nextProps;
+    const { trades, principal = 5000 } = nextProps;
     if (prevState.trades !== trades) {
       const latestData = trades[trades.length - 1];
       const {
@@ -54,7 +54,7 @@ export default class Dashboard extends PureComponent {
         marketValue = 0,
         totalAsset = 0,
         maxBuy = 0,
-      } = calc(latestData);
+      } = calc(latestData, principal);
       const currentProfit = (data[latestData.stock][latestData.buy.length + 3] - averageCost) * position;
       return {
         averageCost: averageCost.toFixed(4),
@@ -190,9 +190,9 @@ export default class Dashboard extends PureComponent {
   }
 
   tradeConfirm = (option, amount, action) => {
-    const { trades, handleTrade } = this.props;
+    const { trades, trials = 20, handleTrade } = this.props;
     const latestData = trades[trades.length - 1];
-    if (latestData.buy.length >= 20) {
+    if (latestData.buy.length >= trials) {
       return this.setState({ over: true });
     }
     Modal.confirm({
@@ -213,15 +213,15 @@ export default class Dashboard extends PureComponent {
   }
 
   toggleNext = () => {
-    const { trades } = this.props;
+    const { trades, trials = 20 } = this.props;
     const latestData = trades[trades.length - 1];
-    this.setState({ next: false, over: latestData.buy.length >= 20 });
+    this.setState({ next: false, over: latestData.buy.length >= trials });
   }
 
   inputFormatter = (value) => parseInt(value, 10) || 0;
 
   render() {
-    const { trades, handleNext } = this.props;
+    const { trades, trials = 20, handleNext } = this.props;
     const {
       over,
       next,
@@ -275,7 +275,7 @@ export default class Dashboard extends PureComponent {
                 <Row justify="center">
                   <Col className="input-label">
                     {
-                      latestData.buy.length >= 20 ?
+                      latestData.buy.length >= trials ?
                       '本轮交易任务结束，点击确认查看本轮交易信息。' :
                       '本期交易结束，请点击确认进入下一个交易期！'
                     }

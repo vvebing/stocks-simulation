@@ -16,8 +16,10 @@ const Login = lazy(() => import('./Login'));
 const Error = lazy(() => import('./Error'));
 const Finish = lazy(() => import('./Finish'));
 const Notice = lazy(() => import('./Notice'));
+const Practice = lazy(() => import('./Practice'));
 const Dashboard = lazy(() => import('./Dashboard'));
 const Preparation = lazy(() => import('./Preparation'));
+const PracticeTest = lazy(() => import('./PracticeTest'));
 const Questionnaire = lazy(() => import('./Questionnaire'));
 
 export const STOCK = {
@@ -38,6 +40,11 @@ export default class App extends PureComponent {
       groupID: '',
       noticed: false,
       showNotice: false,
+      practice: {
+        // buy: [],
+        // sell: [],
+        // test: [],
+      },
       trades: [],
       /**
        * [{
@@ -66,6 +73,11 @@ export default class App extends PureComponent {
         loading: false,
       };
       if (!uuid || !groupID) {
+        return this.setState(nextState);
+      }
+      const practice = await localForage.getItem('practice') ?? {};
+      nextState.practice = practice;
+      if (!practice.buy || !practice.sell || !practice.test) {
         return this.setState(nextState);
       }
       const trades = await localForage.getItem('trades') ?? [];
@@ -276,6 +288,18 @@ export default class App extends PureComponent {
     }, uuid, groupID);
   }
 
+  handlePracticeNext = (practice) => {
+    this.setState((state) => ({
+      practice: {
+        ...state.practice,
+        ...practice,
+      },
+    }), () => {
+      const { practice } = this.state;
+      localForage.setItem('practice', practice);
+    });
+  }
+
   render() {
     const {
       loading,
@@ -286,6 +310,7 @@ export default class App extends PureComponent {
       showNotice,
       trades,
       status,
+      practice,
       totalProfit,
      } = this.state;
 
@@ -304,29 +329,38 @@ export default class App extends PureComponent {
     let subTitle = '';
     let childComponent = null;
     const tempStatus = status;
-    switch(tempStatus) {
-      case 0: {
-        subTitle = `即将开始第${trades.length + 1}轮实验`;
-        childComponent = <Preparation trades={trades} groupID={groupID} handleStart={this.handleStart} />;
-        break;
+
+    if (!practice.buy || !practice.sell) {
+      subTitle = "练习操作";
+      childComponent = <Practice handlePracticeNext={this.handlePracticeNext} />;
+    } else if (!practice.test) {
+      subTitle = "练习测验";
+      childComponent = <PracticeTest handlePracticeNext={this.handlePracticeNext} />;
+    } else {
+      switch(tempStatus) {
+        case 0: {
+          subTitle = `即将开始第${trades.length + 1}轮实验`;
+          childComponent = <Preparation trades={trades} groupID={groupID} handleStart={this.handleStart} />;
+          break;
+        }
+        case 1: {
+          subTitle = `正在进行第${trades.length}轮实验`;
+          childComponent = <Dashboard trades={trades} handleTrade={this.handleTrade} handleNext={this.handleNext} />;
+          break;
+        }
+        case 2: {
+          subTitle = `已结束第${trades.length}轮实验`;
+          childComponent = <Questionnaire groupID={groupID} onQuestionSubmit={this.onQuestionSubmit} />;
+          break;
+        }
+        case 3: {
+          subTitle = `所有实验已结束`;
+          childComponent = <Finish totalProfit={totalProfit} saveTextAsFile={this.saveTextAsFile} />;
+          break;
+        }
+        default:
+          break;
       }
-      case 1: {
-        subTitle = `正在进行第${trades.length}轮实验`;
-        childComponent = <Dashboard trades={trades} handleTrade={this.handleTrade} handleNext={this.handleNext} />;
-        break;
-      }
-      case 2: {
-        subTitle = `已结束第${trades.length}轮实验`;
-        childComponent = <Questionnaire groupID={groupID} onQuestionSubmit={this.onQuestionSubmit} />;
-        break;
-      }
-      case 3: {
-        subTitle = `所有实验已结束`;
-        childComponent = <Finish totalProfit={totalProfit} saveTextAsFile={this.saveTextAsFile} />;
-        break;
-      }
-      default:
-        break;
     }
 
     return (
@@ -402,7 +436,7 @@ function getExperimentStatus(trades) {
   return status;
 }
 
-export function calc(trade, total = false) {
+export function calc(trade, principal = 5000, total = false) {
   const { stock, buy, sell } = trade;
   if (
     !stock
@@ -429,11 +463,11 @@ export function calc(trade, total = false) {
     position += buy[i] - sell[i];
     profit += sell[i] * data[stock][i + 3];
   }
-  const balance = 5000 + profit - cost;
+  const balance = principal + profit - cost;
   const averageCost = amount <= 0 ? 0 : (tCost / amount);
   const marketValue = position * data[stock][buy.length + 3];
   const totalAsset = balance + marketValue;
-  const totalProfit = totalAsset - 5000;
+  const totalProfit = totalAsset - principal;
   const maxBuy = Math.floor(balance / data[stock][buy.length + 3])
   return {
     averageCost,
@@ -449,7 +483,7 @@ export function calc(trade, total = false) {
 function calcProfit(trades) {
   let totalProfit = 0;
   for (let i = 0; i < trades.length; i += 1) {
-    const { totalProfit: profit = 0 } = calc(trades[i], true);
+    const { totalProfit: profit = 0 } = calc(trades[i], 5000, true);
     totalProfit += profit;
   }
   return +totalProfit.toFixed(2);

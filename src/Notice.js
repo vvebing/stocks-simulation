@@ -1,7 +1,7 @@
 import { Button, Checkbox, Modal, Space, Typography } from 'antd';
 import React, { useState } from 'react';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph, Text, Link } = Typography;
 
 function Notice({ visible, noticed, onCancel }) {
   const [disabled, toggleDisabled] = useState(!noticed);
@@ -99,6 +99,7 @@ function Notice({ visible, noticed, onCancel }) {
                 <Space>
                   <Text strong>总盈亏</Text>
                   累计盈亏，即当前盈亏 + 前期卖出部分的盈亏
+                  <Link>例子</Link>
                 </Space>
               </li>
               <li>

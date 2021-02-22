@@ -134,6 +134,14 @@ body {
   background-color: rgba(181, 200, 234, 0.3);
 }
 
+#practiceTest .ant-descriptions {
+  margin-bottom: 1em;
+}
+
+#practiceTest .ant-form-item-has-success .ant-form-item-explain {
+  color: #52C41A;
+}
+
 @media (max-width: 575px) {
   .ant-col.ant-col-offset-4 {
     margin-left: unset;
