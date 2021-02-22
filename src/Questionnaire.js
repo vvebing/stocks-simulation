@@ -104,7 +104,7 @@ function Questionnaire({ groupID, onQuestionSubmit }) {
       form={form}
       id="question"
       layout="vertical"
-      onFinish={() => onQuestionSubmit([tableArray, ...optionArray])}
+      onFinish={() => onQuestionSubmit([...tableArray, ...optionArray])}
     >
       {
         TABLE.map((table, num) => (

@@ -57,7 +57,7 @@ function Preparation({ trades, groupID, handleStart }) {
               <div id="step">
                 <Row justify="space-around">
                   {
-                    Object.entries(STOCK).map(([key, title]) => {
+                    Object.entries(STOCK).slice(0, -1).map(([key, title]) => {
                       const unselected = trades.findIndex((trade) => trade.stock === key) === -1;
                       return (
                         <Col key={key} span={4}>

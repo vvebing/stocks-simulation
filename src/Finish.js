@@ -25,7 +25,7 @@ function Finish({ totalProfit, saveTextAsFile }) {
         <p key="9">&nbsp;</p>,
       ]}
       extra={[
-        <Button key="download" type="link" onClick={saveTextAsFile}>下载实验数据</Button>,
+        <Button key="download" type="link" onClick={saveTextAsFile}>导出实验数据</Button>,
         <Button key="upload" type="primary" onClick={mailTo}>发送实验结果</Button>
       ]}
     />

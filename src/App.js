@@ -281,12 +281,25 @@ export default class App extends PureComponent {
   }
 
   saveTextAsFile = () => {
-    const { uuid, groupID, trades } = this.state;
-    saveTextAsFile({
-      uuid,
-      groupID,
-      trades,
-    }, uuid, groupID);
+    Modal.confirm({
+      okText: '确定',
+      cancelText: '取消',
+      title: '导出实验数据',
+      content: [
+        <p key="text">为避免实验数据丢失，请在导出实验数据后发送到主试邮箱！</p>,
+        <p key="password">请主试输入密码：<Input.Password onChange={(event) => {this.clearPassword = event.target.value}} /></p>,
+      ],
+      onOk: async () => {
+        if (this.clearPassword !== CLEAR_PASSWORD) {
+          message.warning('主试权限才能导出实验数据！');
+          return;
+        }
+        this.clearPassword = '';
+
+        const { uuid, groupID, trades } = this.state;
+        saveTextAsFile(calcFinalData(trades, uuid, groupID), uuid, groupID);
+      },
+    });
   }
 
   handlePracticeNext = (practice) => {
@@ -490,11 +503,85 @@ function calcProfit(trades) {
   return +totalProfit.toFixed(2);
 }
 
-function saveTextAsFile(data, uuid, groupID) {
-  const fileText = JSON.stringify(data);
+function calcFinalData(rawData, uuid, groupID) {
+  const trades = [];
+  for (let i = 0; i < rawData.length; i += 1) {
+    const trials = [];
+    const { buy, sell, mood, stock } = rawData[i];
+    const trade = {
+      sell: [],
+      buy: [],
+      stock,
+    };
+    let trialIndex;
+    let totalSell = 0;
+    let sellAfterRise = 0;
+    let sellAfterFall = 0;
+    const sellPriceSubAverageCost = [];
+    for (let j = 0; j < buy.length; j += 1) {
+      trade.sell.push(sell[j]);
+      trade.buy.push(buy[j]);
+      const {
+        averageCost,
+        position,
+        totalProfit,
+        marketValue,
+      } = calc(trade);
+      const trial = {
+        'Buy': buy[j],  // 每个 trial 买入的股票数量
+        'Sell': sell[j],  // 每个 trial 卖出的股票数量
+        'Current Stock Price': data[stock][j + 3],  // 当前股价
+        'Weighted Average Purchase Price': averageCost, // 加权平均买入价
+        'Position': position, // 持仓
+        'Current Profit': (data[stock][j + 3] - averageCost) * position,  // 当前盈亏
+        'Total Profit': totalProfit,  // 总盈亏
+        'Market Value': marketValue,  // 股票总市值
+      };
+      if (sell[j] > 0) {
+        const diff = data[stock][j + 3] - averageCost;
+        sellPriceSubAverageCost.push(diff);
+        trial['The Difference Between The Sell Price And The Weighted Average Purchase Price'] = diff;  // 卖出价与加权平均买入价的差值
+        if (j > 0) {
+          if (sell[j] > sell[j - 1]) {
+            sellAfterRise += sell[j];
+          } else if (sell[j] < sell[j - 1]) {
+            sellAfterFall += sell[j];
+          }
+        }
+      }
+      trials.push(trial);
+      if (trialIndex === undefined) {
+        totalSell += sell[j];
+        if (totalSell >= 300) {
+          trialIndex = j;
+        }
+      }
+    }
+    trades.push({
+      'The Average Of SP-WAPP': sellPriceSubAverageCost.reduce((a, b) => a + b, 0) / sellPriceSubAverageCost.length,  // 每轮实验卖出价与加权平均买入价的差值的平均值
+      'Alpha': (sellAfterRise - sellAfterFall) / (sellAfterRise + sellAfterFall), // α = (s+ - s-) / (s+ + s-)
+      'Total Profit': trials[trials.length - 1]['Total Profit'],  // 每轮实验的最终累计盈亏
+      'Trial While Sold 300 Shares': trialIndex,  // 在第几个 trial 累计卖出 300 股
+      'Sell After Rise': sellAfterRise, // 股票上涨后卖出股票数量
+      'Sell After Fall': sellAfterFall, // 股票下跌后卖出股票数量
+      'Trials': trials, // 每个 trial 的交易数据数组
+      'Stock': stock,  // 股票类型
+      'Mood': mood, // 情绪调查
+    });
+  }
+  return {
+    'User ID': uuid, // 用户 ID
+    'Trades': trades, // 交易数据
+    'Group ID': groupID,  // 用户选择分组
+    'Total Profit': trades.reduce((total, trade) => total + trade['Total Profit'], 0),  // 五轮实验的总盈亏
+  };
+}
+
+function saveTextAsFile(finalData, uuid, groupID) {
+  const fileText = JSON.stringify(finalData);
   const fileTextAsBlob = new Blob([fileText], {type: 'text/plain'});
   const downloadLink = document.createElement('a');
-  downloadLink.download = `stocks-simulation-${uuid}-${groupID}.txt`;
+  downloadLink.download = `stocks-simulation-${uuid}-${groupID}.json`;
   downloadLink.innerHTML = 'Download File';
   if (window.webkitURL !== null) {
     // Chrome allows the link to be clicked
