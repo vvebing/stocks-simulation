@@ -1,7 +1,7 @@
-import { Button, Checkbox, Modal, Space, Typography } from 'antd';
+import { Button, Checkbox, Modal, Space, Timeline, Typography } from 'antd';
 import React, { useState } from 'react';
 
-const { Title, Paragraph, Text, Link } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 function Notice({ visible, noticed, onCancel }) {
   const [disabled, toggleDisabled] = useState(!noticed);
@@ -16,6 +16,43 @@ function Notice({ visible, noticed, onCancel }) {
       const { scrollHeight, scrollTop, clientHeight } = e.target;
       scrollHeight - (scrollTop + clientHeight) <= 24 && toggleDisabled(false);
     }
+  }
+
+  const openEgModal = () => {
+    Modal.info({
+      width: 650,
+      centered: true,
+      okText: '明白了',
+      title: '当前盈亏与总盈亏计算例子',
+      content: (
+        <Timeline mode="left">
+          <Timeline.Item label="第一个交易期">股价：10 金币</Timeline.Item>
+          <Timeline.Item color="green">买入 100 股</Timeline.Item>
+          <Timeline.Item label="第二个交易期">股价：5 金币</Timeline.Item>
+          <Timeline.Item>
+            <p>当前盈亏：(5 - 10) × 100 = -500</p>
+            <p>总盈亏：(5 - 10) × 100 = -500</p>
+          </Timeline.Item>
+          <Timeline.Item color="red">卖出 50 股</Timeline.Item>
+          <Timeline.Item>
+            <p>当前持仓：100 - 50 = 50</p>
+            <p>当前盈亏：(5 - 10) × 50 = -250</p>
+            <p>总盈亏：(5 - 10) × 50 = -250</p>
+          </Timeline.Item>
+          <Timeline.Item label="第三个交易期">股价：15 金币</Timeline.Item>
+          <Timeline.Item>
+            <p>当前盈亏：(15 - 10) × 50 = 250</p>
+            <p>总盈亏：-250 + 250 = 0</p>
+          </Timeline.Item>
+          <Timeline.Item color="red">卖出 50 股</Timeline.Item>
+          <Timeline.Item>
+            <p>当前持仓：0</p>
+            <p>当前盈亏：0</p>
+            <p>总盈亏：(15 - 10) × 50 + (-250) = 0</p>
+          </Timeline.Item>
+        </Timeline>
+      ),
+    });
   }
 
   return (
@@ -99,7 +136,10 @@ function Notice({ visible, noticed, onCancel }) {
                 <Space>
                   <Text strong>总盈亏</Text>
                   累计盈亏，即当前盈亏 + 前期卖出部分的盈亏
-                  <Link>例子</Link>
+                  <Button
+                    type="link"
+                    onClick={openEgModal}
+                  >例子</Button>
                 </Space>
               </li>
               <li>
