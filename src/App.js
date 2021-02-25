@@ -510,8 +510,8 @@ function calcFinalData(rawData, uuid, groupID) {
     const trials = [];
     const { buy, sell, mood, stock } = rawData[i];
     const trade = {
-      sell: [],
-      buy: [],
+      buy: [300],
+      sell: [0],
       stock,
     };
     let trialIndex;
@@ -523,7 +523,7 @@ function calcFinalData(rawData, uuid, groupID) {
     let totalRealizedGain = 0;
     let totalRealizedLose = 0;
     const sellPriceSubAverageCost = [];
-    for (let j = 0; j < buy.length; j += 1) {
+    for (let j = 1; j < buy.length; j += 1) {
       trade.sell.push(sell[j]);
       trade.buy.push(buy[j]);
       const {
@@ -536,11 +536,11 @@ function calcFinalData(rawData, uuid, groupID) {
       let paperLose = 0;
       let realizedGain = 0;
       let realizedLose = 0;
-      const currentProfit = (data[stock][j + 4] - averageCost) * position;
-      const realizedProfit = (data[stock][j + 4] - averageCost) * sell[j];
-      if (data[stock][j + 4] > averageCost) {
+      const currentProfit = (data[stock][j + 3] - averageCost) * position;
+      const realizedProfit = (data[stock][j + 3] - averageCost) * sell[j];
+      if (data[stock][j + 3] > averageCost) {
         [paperGain, realizedGain] = [currentProfit, realizedProfit];
-      } else if (data[stock][j + 4] < averageCost) {
+      } else if (data[stock][j + 3] < averageCost) {
         [paperLose, realizedLose] = [currentProfit, realizedProfit];
       }
       totalGain += (paperGain + realizedGain);
@@ -550,7 +550,7 @@ function calcFinalData(rawData, uuid, groupID) {
       const trial = {
         'Buy': buy[j],  // 每个 trial 买入的股票数量
         'Sell': sell[j],  // 每个 trial 卖出的股票数量
-        'Current Stock Price': data[stock][j + 4],  // 当前股价
+        'Current Stock Price': data[stock][j + 3],  // 当前股价
         'Weighted Average Purchase Price': averageCost, // 加权平均买入价
         'Position': position, // 持仓
         'Current Profit': currentProfit,  // 当前盈亏
@@ -562,7 +562,7 @@ function calcFinalData(rawData, uuid, groupID) {
         'Realized Lose': realizedLose,  // 兑现亏损
       };
       if (sell[j] > 0) {
-        const diff = data[stock][j + 4] - averageCost;
+        const diff = data[stock][j + 3] - averageCost;
         sellPriceSubAverageCost.push(diff);
         trial['The Diff Of SP-WAPP'] = diff;  // 卖出价与加权平均买入价的差值
         if (j > 0) {
