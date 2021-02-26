@@ -1,7 +1,7 @@
 import { Button, Card, Col, Descriptions, message, Radio, Result, Row, Steps, Typography } from 'antd';
 import React, { useState } from 'react';
 import Thumbnail from './Thumbnail.jpg';
-import { STOCK } from './App';
+import { STOCK, useInterval } from './App';
 
 const STEPS = [
   '准备',
@@ -13,6 +13,17 @@ const STEPS = [
 function Preparation({ trades, groupID, handleStart }) {
   const [stock, selectStock] = useState();
   const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(60);
+  const [isRunning, toggleIsRunning] = useState(true);
+
+  useInterval(() => {
+    if (count > 0) {
+      setCount(count - 1);
+    } else {
+      toggleIsRunning(false);
+    }
+  }, isRunning ? 1000 : null);
+
   const next = () => {
     if (current >= 1 && !stock) {
       if (groupID !== 10) {
@@ -26,7 +37,9 @@ function Preparation({ trades, groupID, handleStart }) {
       return handleStart(stock);
     }
     current < STEPS.length - 1 && setCurrent(current + 1);
+    toggleIsRunning(false);
   };
+
   const prev = () => {
     current > 0 && setCurrent(current - 1);
   };
@@ -47,7 +60,10 @@ function Preparation({ trades, groupID, handleStart }) {
               <Result
                 title={`第${trades.length + 1}轮实验即将开始`}
                 subTitle="如果您已准备就绪，请点击开始！"
-                extra={<Button type="primary" onClick={next}>开始</Button>}
+                extra={[
+                <Button key="countdown" type="primary" disabled={isRunning} onClick={next}>{isRunning ? `建议休息${count}秒后开始` : '开始'}</Button>,
+                isRunning && <Button key="start" type="link" onClick={next}>准备就绪，立即开始</Button>
+              ]}
               />
             );
           }
@@ -95,11 +111,10 @@ function Preparation({ trades, groupID, handleStart }) {
                             <Typography.Text strong>选择其中一种</Typography.Text>
                             进行交易，并且必须在
                             <Typography.Text keyboard>Point0</Typography.Text>
-                            通过购买/接受馈赠等方式
-                            <Typography.Text strong>拥有
+                            <Typography.Text strong>购买
                             <Typography.Text keyboard>300</Typography.Text>
                             股</Typography.Text>
-                            股票后，才能进入交易市场进行交易。
+                            后，才能进入交易市场进行交易。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
                             <Typography.Text strong>
@@ -125,11 +140,10 @@ function Preparation({ trades, groupID, handleStart }) {
                                 <Typography.Text strong>选择其中一种</Typography.Text>
                                 进行交易，并且必须在
                                 <Typography.Text keyboard>Point0</Typography.Text>
-                                通过购买/接受馈赠等方式
-                                <Typography.Text strong>拥有
+                                <Typography.Text strong>购买
                                 <Typography.Text keyboard>300</Typography.Text>
                                 股</Typography.Text>
-                                股票后，才能进入交易市场进行交易。
+                                后，才能进入交易市场进行交易。
                               </Typography.Paragraph>
                               <Typography.Paragraph>
                                 您现在拥有
@@ -170,11 +184,10 @@ function Preparation({ trades, groupID, handleStart }) {
                                   <Typography.Text strong>选择其中一种</Typography.Text>
                                   进行交易，并且必须在
                                   <Typography.Text keyboard>Point0</Typography.Text>
-                                  通过购买/接受馈赠等方式
-                                  <Typography.Text strong>拥有
+                                  <Typography.Text strong>购买
                                   <Typography.Text keyboard>300</Typography.Text>
                                   股</Typography.Text>
-                                  股票后，才能进入交易市场进行交易。
+                                  后，才能进入交易市场进行交易。
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
                                   您现在拥有

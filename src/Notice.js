@@ -1,11 +1,23 @@
-import { Button, Checkbox, Modal, Space, Timeline, Typography } from 'antd';
+import { Button, Checkbox, message, Modal, Space, Timeline, Typography } from 'antd';
 import React, { useState } from 'react';
+import { useInterval } from './App';
 
 const { Title, Paragraph, Text } = Typography;
 
 function Notice({ visible, noticed, onCancel }) {
   const [disabled, toggleDisabled] = useState(!noticed);
   const [checked, onChange] = useState(noticed);
+  const [count, setCount] = useState(45);
+  const [isRunning, toggleIsRunning] = useState(!noticed);
+  const [showExample, toggleShowExample] = useState(noticed);
+
+  useInterval(() => {
+    if (count > 0) {
+      setCount(count - 1);
+    } else {
+      toggleIsRunning(false);
+    }
+  }, isRunning ? 1000 : null);
 
   const toggleChecked = (e) => {
     onChange(e.target.checked);
@@ -53,7 +65,16 @@ function Notice({ visible, noticed, onCancel }) {
         </Timeline>
       ),
     });
+    toggleShowExample(true);
   }
+
+  const closeModal = () => {
+    if (!showExample) {
+      message.warning('请查看盈亏例子后再进行下一步！');
+    } else {
+      onCancel();
+    }
+  };
 
   return (
     <Modal
@@ -78,12 +99,12 @@ function Notice({ visible, noticed, onCancel }) {
           <Button
             key="button"
             type="primary"
-            disabled={disabled || !checked}
-            onClick={onCancel}
-          >确定</Button>
+            onClick={closeModal}
+            disabled={disabled || !checked || isRunning}
+          >{isRunning ? `${count}秒` : '确定'}</Button>
         </Space>
       }
-      onCancel={onCancel}
+      onCancel={closeModal}
     >
       <div id="notice" onScroll={handleScroll}>
         <Typography>

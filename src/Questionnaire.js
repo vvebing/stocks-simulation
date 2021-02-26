@@ -1,9 +1,14 @@
 import { Button, Col, Form, message, Radio, Row } from 'antd';
 import React, { useState } from 'react';
+import { STOCK } from './App';
 
 const TABLE = [{
   key: '1',
-  title: '1. 在本轮任务中，对于投资顾问购买/您自己购买/投资顾问推荐下您自己购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+  title: {
+    10: '1. 在本轮任务中，对于投资顾问购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+    20: '1. 在本轮任务中，对于您自己购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+    30: '1. 在本轮任务中，对于投资顾问推荐下您自己购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+  },
   head: [
     '',
     '非常不自豪',
@@ -26,7 +31,11 @@ const TABLE = [{
   ],
 }, {
   key: '2',
-  title: '2. 在本轮任务中，对于投资顾问购买/您自己购买/投资顾问推荐下您自己购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+  title: {
+    10: '2. 在本轮任务中，对于投资顾问购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+    20: '2. 在本轮任务中，对于您自己购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+    30: '2. 在本轮任务中，对于投资顾问推荐下您自己购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+  },
   head: [
     '',
     '非常不后悔',
@@ -64,7 +73,7 @@ const OPTION = [{
   30: '4. 在本轮任务中，您在卖出别人推荐下自己选择并购买的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
 }];
 
-function Questionnaire({ groupID, onQuestionSubmit }) {
+function Questionnaire({ trades, groupID, onQuestionSubmit }) {
   const [form] = Form.useForm();
   const [tableArray, toggleTable] = useState([[], []]);
   const [optionArray, toggleOption] = useState([]);
@@ -98,6 +107,7 @@ function Questionnaire({ groupID, onQuestionSubmit }) {
     }
     form.submit();
   };
+  const { stock } = trades[trades.length - 1] ?? {};
 
   return (
     <Form
@@ -110,7 +120,7 @@ function Questionnaire({ groupID, onQuestionSubmit }) {
         TABLE.map((table, num) => (
           <Form.Item
             key={table.key}
-            label={table.title}
+            label={table.title[groupID].replace('XX', STOCK[stock])}
             style={{ flexDirection: 'unset' }}
           >
             <Row gutter={[8, 16]} className="question-head">
@@ -146,7 +156,7 @@ function Questionnaire({ groupID, onQuestionSubmit }) {
           <Form.Item
             key={option.key}
             name={option.key}
-            label={option[groupID]}
+            label={option[groupID].replace('XX', STOCK[stock])}
             style={{ flexDirection: 'unset' }}
             rules={[
               { required: true, message: '该项为必选项' }

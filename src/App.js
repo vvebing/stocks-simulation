@@ -1,4 +1,4 @@
-import React, { lazy, PureComponent } from 'react';
+import React, { lazy, PureComponent, useEffect, useRef } from 'react';
 import localForage from 'localforage';
 import {
   Button,
@@ -365,7 +365,7 @@ export default class App extends PureComponent {
         }
         case 2: {
           subTitle = `已结束第${trades.length}轮实验`;
-          childComponent = <Questionnaire groupID={groupID} onQuestionSubmit={this.onQuestionSubmit} />;
+          childComponent = <Questionnaire trades={trades} groupID={groupID} onQuestionSubmit={this.onQuestionSubmit} />;
           break;
         }
         case 3: {
@@ -625,4 +625,20 @@ function saveTextAsFile(finalData, uuid, groupID) {
     document.body.appendChild(downloadLink);
   }
   downloadLink.click();
+}
+
+export function useInterval(callback, delay = 1000) {
+  const savedCallback = useRef();
+  useEffect(() => {
+    savedCallback.current = callback;
+  });
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
 }
