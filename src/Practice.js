@@ -6,7 +6,7 @@ function Practice({ handlePracticeNext }) {
   const [trades, changeTrades] = useState({ stock: 'Practice', buy: [], sell: [] });
   const handleTrade = (option, amount) => {
     const { buy, sell } = trades;
-    if (buy.length >= 8) {
+    if (buy.length >= 9) {
       handlePracticeNext({ buy, sell });
     }
     const updateKeys = {};
@@ -34,7 +34,7 @@ function Practice({ handlePracticeNext }) {
     <div>
       <h3>首先进入练习环节。该环节的收益不计入最终累计收益，仅为熟悉操作所用。请根据屏幕呈现的信息，独立作出交易决策。</h3>
       <Dashboard
-        trials={8}
+        trials={9}
         principal={1000}
         trades={[trades]}
         handleNext={handleNext}

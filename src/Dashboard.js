@@ -12,32 +12,15 @@ import { calc, STOCK } from './App';
 export default class Dashboard extends PureComponent {
   constructor(props) {
     super(props);
-    const { trades, principal = 5000, trials = 20 } = props;
+    const { trades, principal = 5000, trials = 21 } = props;
     const latestData = trades[trades.length - 1] || {};
-    const {
-      averageCost = 0,
-      position = 0,
-      totalProfit = 0,
-      balance = 0,
-      marketValue = 0,
-      totalAsset = 0,
-      maxBuy = 0,
-    } = calc(latestData, principal);
-    const currentProfit = (data[latestData.stock][latestData.buy.length + 3] - averageCost) * position;
     this.state = {
       over: latestData.buy && latestData.buy.length >= trials,
       buyValue: 0,
       sellValue: 0,
-      averageCost: averageCost.toFixed(4),    // 加权成本
-      position,       // 持仓
-      currentProfit: currentProfit.toFixed(4),  // 当前盈亏
-      totalProfit: totalProfit.toFixed(4),    // 总盈亏
-      balance: balance.toFixed(4),        // 现金余额
-      marketValue: marketValue.toFixed(4),    // 股票市值
-      totalAsset: totalAsset.toFixed(4),     // 总资产
-      maxBuy,
       trades,
-      next: false,
+      next: true,
+      ...calculate(trades, principal, false),
     };
     this.lineRef = createRef();
   }
@@ -45,26 +28,8 @@ export default class Dashboard extends PureComponent {
   static getDerivedStateFromProps(nextProps, prevState) {
     const { trades, principal = 5000 } = nextProps;
     if (prevState.trades !== trades) {
-      const latestData = trades[trades.length - 1];
-      const {
-        averageCost = 0,
-        position = 0,
-        totalProfit = 0,
-        balance = 0,
-        marketValue = 0,
-        totalAsset = 0,
-        maxBuy = 0,
-      } = calc(latestData, principal);
-      const currentProfit = (data[latestData.stock][latestData.buy.length + 3] - averageCost) * position;
       return {
-        averageCost: averageCost.toFixed(4),
-        position,
-        currentProfit: currentProfit.toFixed(4),
-        totalProfit: totalProfit.toFixed(4),
-        balance: balance.toFixed(4),
-        marketValue: marketValue.toFixed(4),
-        totalAsset: totalAsset.toFixed(4),
-        maxBuy,
+        ...calculate(trades, principal, false),
         trades,
       };
     }
@@ -82,9 +47,10 @@ export default class Dashboard extends PureComponent {
     this.getOption();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const { trades } = this.props;
-    if (trades !== prevProps.trades) {
+    const { next } = this.state;
+    if (trades !== prevProps.trades || next !== prevState.next) {
       this.getOption();
     }
   }
@@ -100,6 +66,7 @@ export default class Dashboard extends PureComponent {
     const latestData = trades[trades.length - 1];
     if (!latestData) return;
     const { buy, stock } = latestData;
+    const { next } = this.state;
 
     const option = {
       grid: {
@@ -136,7 +103,7 @@ export default class Dashboard extends PureComponent {
         {
           name: '股票价格',
           type: 'line',
-          data: data[stock].slice(3, buy.length + 4),
+          data: data[stock].slice(3, buy.length + (next && buy.length ? 3 : 4)),
           markPoint: {
             data: [
               { type: 'min', name: '最低值' },
@@ -190,7 +157,7 @@ export default class Dashboard extends PureComponent {
   }
 
   tradeConfirm = (option, amount, action) => {
-    const { trades, trials = 20, handleTrade } = this.props;
+    const { trades, trials = 21, handleTrade } = this.props;
     const latestData = trades[trades.length - 1];
     if (latestData.buy.length >= trials) {
       return this.setState({ over: true });
@@ -213,15 +180,20 @@ export default class Dashboard extends PureComponent {
   }
 
   toggleNext = () => {
-    const { trades, trials = 20 } = this.props;
+    const { trades, trials = 21, principal = 5000 } = this.props;
     const latestData = trades[trades.length - 1];
-    this.setState({ next: false, over: latestData.buy.length >= trials });
+    const over = latestData.buy.length >= trials;
+    this.setState({
+      over,
+      next: false,
+      ...calculate(trades, principal, !over),
+    });
   }
 
   inputFormatter = (value) => parseInt(value, 10) || 0;
 
   render() {
-    const { trades, trials = 20, handleNext } = this.props;
+    const { trades, trials = 21, handleNext } = this.props;
     const {
       over,
       next,
@@ -258,7 +230,7 @@ export default class Dashboard extends PureComponent {
         <div className="data">
           <div className="describe">
             <Descriptions bordered column={1} title="资产配置">
-              <Descriptions.Item label="当前股价">{data[stock][buy.length + 3]}</Descriptions.Item>
+              <Descriptions.Item label="当前股价">{data[stock][buy.length + (next ? 2 : 3)]}</Descriptions.Item>
               <Descriptions.Item label="成本">{+averageCost}</Descriptions.Item>
               <Descriptions.Item label="持仓">{position}</Descriptions.Item>
               <Descriptions.Item label="当前盈亏">{+currentProfit}</Descriptions.Item>
@@ -364,4 +336,28 @@ export default class Dashboard extends PureComponent {
       </div>
     );
   }
+}
+
+function calculate(trades, principal, next) {
+  const latestData = trades[trades.length - 1];
+  const {
+    averageCost = 0,
+    position = 0,
+    totalProfit = 0,
+    balance = 0,
+    marketValue = 0,
+    totalAsset = 0,
+    maxBuy = 0,
+  } = calc(latestData, principal, next);
+  const currentProfit = (data[latestData.stock][latestData.buy.length + (next ? 3 : 2)] - averageCost) * position;
+  return {
+    averageCost: averageCost.toFixed(4),    // 加权成本
+    position,       // 持仓
+    currentProfit: currentProfit.toFixed(4),  // 当前盈亏
+    totalProfit: totalProfit.toFixed(4),    // 总盈亏
+    balance: balance.toFixed(4),        // 现金余额
+    marketValue: marketValue.toFixed(4),    // 股票市值
+    totalAsset: totalAsset.toFixed(4),     // 总资产
+    maxBuy,
+  };
 }

@@ -50,8 +50,8 @@ export default class App extends PureComponent {
       /**
        * [{
        *  stock: A | B | C | D | E,
-       *  buy: [],  // length = 20
-       *  sell: [], // length = 20
+       *  buy: [],  // length = 21
+       *  sell: [], // length = 21
        *  mood: [], // length = 4
        * }]
        */
@@ -226,7 +226,7 @@ export default class App extends PureComponent {
       if (buy.length !== sell.length) {
         return this.setState({ status: -1 });
       }
-      if (buy.length >= 20) {
+      if (buy.length >= 21) {
         if (mood.length < 4) {
           this.setState({ status: 2 });
         } else {
@@ -429,8 +429,8 @@ function getExperimentStatus(trades) {
   if (!latestData) {
     status = 0;
   } else if (
-    buy.length >= 20 ||
-    sell.length >= 20
+    buy.length >= 21 ||
+    sell.length >= 21
   ) {
     if (mood.length < 4) {
       status = 2;
@@ -440,7 +440,7 @@ function getExperimentStatus(trades) {
       status = 0;
     }
   } else if (
-    buy.length < 20 &&
+    buy.length < 21 &&
     buy.length === sell.length &&
     mood.length === 0
   ) {
@@ -451,13 +451,13 @@ function getExperimentStatus(trades) {
   return status;
 }
 
-export function calc(trade, principal = 5000, total = false) {
+export function calc(trade, principal = 5000, next = false, total = false) {
   const { stock, buy, sell } = trade;
   if (
     !stock
     || !Array.isArray(buy)
     || !Array.isArray(sell)
-    || (total && (buy.length < 20 || sell.length < 20))
+    || (total && (buy.length < 21 || sell.length < 21))
   ) {
     return {};
   }
@@ -480,10 +480,10 @@ export function calc(trade, principal = 5000, total = false) {
   }
   const balance = principal + profit - cost;
   const averageCost = amount <= 0 ? 0 : (tCost / amount);
-  const marketValue = position * data[stock][buy.length + 3];
+  const marketValue = position * data[stock][buy.length + (next ? 3 : 2)];
   const totalAsset = balance + marketValue;
   const totalProfit = totalAsset - principal;
-  const maxBuy = Math.floor(balance / data[stock][buy.length + 3])
+  const maxBuy = Math.floor(balance / data[stock][buy.length + (next ? 3 : 2)]);
   return {
     averageCost,
     position,
@@ -498,7 +498,7 @@ export function calc(trade, principal = 5000, total = false) {
 function calcProfit(trades) {
   let totalProfit = 0;
   for (let i = 0; i < trades.length; i += 1) {
-    const { totalProfit: profit = 0 } = calc(trades[i], 5000, true);
+    const { totalProfit: profit = 0 } = calc(trades[i], 5000, false, true);
     totalProfit += profit;
   }
   return +totalProfit.toFixed(2);
