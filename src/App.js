@@ -520,7 +520,8 @@ function calcFinalData(rawData, uuid, groupID) {
     let sellAfterFall = 0;
     let totalGain = 0;
     let totalLose = 0;
-    let prevAverageCost = 0;
+    let prevPosition = 300;
+    let prevAverageCost = 10;
     let totalRealizedGain = 0;
     let totalRealizedLose = 0;
     const sellPriceSubAverageCost = [];
@@ -537,7 +538,7 @@ function calcFinalData(rawData, uuid, groupID) {
       let paperLose = 0;
       let realizedGain = 0;
       let realizedLose = 0;
-      const paperProfit = (data[stock][j + 3] - prevAverageCost) * (position + sell[j]);
+      const paperProfit = (data[stock][j + 3] - prevAverageCost) * prevPosition;
       const realizedProfit = (data[stock][j + 3] - prevAverageCost) * sell[j];
       if (data[stock][j + 3] > prevAverageCost) {
         [paperGain, realizedGain] = [paperProfit, realizedProfit];
@@ -549,24 +550,26 @@ function calcFinalData(rawData, uuid, groupID) {
       totalRealizedGain += realizedGain;
       totalRealizedLose += realizedLose;
       prevAverageCost = averageCost;
+      prevPosition = position;
       const trial = {
+        'Trial': j,
         'Buy': buy[j],  // 每个 trial 买入的股票数量
         'Sell': sell[j],  // 每个 trial 卖出的股票数量
         'Current Stock Price': data[stock][j + 3],  // 当前股价
-        'Weighted Average Purchase Price': averageCost, // 加权平均买入价
+        'Weighted Average Purchase Price': +averageCost.toFixed(4), // 加权平均买入价
         'Position': position, // 持仓
-        'Current Profit': (data[stock][j + 3] - averageCost) * position,  // 当前盈亏
-        'Total Profit': totalProfit,  // 总盈亏
-        'Market Value': marketValue,  // 股票总市值
-        'Paper Gain': paperGain,  //  纸面盈利
-        'Paper Lose': paperLose,  // 纸面亏损
-        'Realized Gain': realizedGain,  // 兑现盈利
-        'Realized Lose': realizedLose,  // 兑现亏损
+        'Current Profit': +((data[stock][j + 3] - averageCost) * position).toFixed(4),  // 当前盈亏
+        'Total Profit': +totalProfit.toFixed(4),  // 总盈亏
+        'Market Value': +marketValue.toFixed(4),  // 股票总市值
+        'Paper Gain': +paperGain.toFixed(4),  //  纸面盈利
+        'Paper Lose': +paperLose.toFixed(4),  // 纸面亏损
+        'Realized Gain': +realizedGain.toFixed(4),  // 兑现盈利
+        'Realized Lose': +realizedLose.toFixed(4),  // 兑现亏损
       };
       if (sell[j] > 0) {
         const diff = data[stock][j + 3] - averageCost;
         sellPriceSubAverageCost.push(diff);
-        trial['The Diff Of SP-WAPP'] = diff;  // 卖出价与加权平均买入价的差值
+        trial['The Diff Of SP-WAPP'] = +diff.toFixed(4);  // 卖出价与加权平均买入价的差值
         if (j > 0) {
           if (sell[j] > sell[j - 1]) {
             sellAfterRise += sell[j];
@@ -586,14 +589,15 @@ function calcFinalData(rawData, uuid, groupID) {
     const gainRatio = totalGain === 0 ? 0 : totalRealizedGain / totalGain;
     const lossRatio = totalLose === 0 ? 0 : totalRealizedLose / totalLose;
     trades.push({
-      'The Average Of SP-WAPP': sellPriceSubAverageCost.reduce((a, b) => a + b, 0) / sellPriceSubAverageCost.length,  // 每轮实验卖出价与加权平均买入价的差值的平均值
-      'Alpha': (sellAfterRise - sellAfterFall) / (sellAfterRise + sellAfterFall), // α = (s+ - s-) / (s+ + s-)
-      'Total Profit': trials[trials.length - 1]['Total Profit'],  // 每轮实验的最终累计盈亏
+      'Round': i + 1,
+      'The Average Of SP-WAPP': +(sellPriceSubAverageCost.reduce((a, b) => a + b, 0) / sellPriceSubAverageCost.length).toFixed(4),  // 每轮实验卖出价与加权平均买入价的差值的平均值
+      'Alpha': +((sellAfterRise - sellAfterFall) / (sellAfterRise + sellAfterFall)).toFixed(4), // α = (s+ - s-) / (s+ + s-)
+      'Total Profit': +(trials[trials.length - 1]['Total Profit']).toFixed(4),  // 每轮实验的最终累计盈亏
       'Trial While Sold 300 Shares': trialIndex,  // 在第几个 trial 累计卖出 300 股
       'Sell After Rise': sellAfterRise, // 股票上涨后卖出股票数量
       'Sell After Fall': sellAfterFall, // 股票下跌后卖出股票数量
       'Trials': trials, // 每个 trial 的交易数据数组
-      'DE': gainRatio - lossRatio,  // DE
+      'DE': +(gainRatio - lossRatio).toFixed(4),  // DE
       'Stock': stock,  // 股票类型
       'Mood': mood, // 情绪调查
     });
