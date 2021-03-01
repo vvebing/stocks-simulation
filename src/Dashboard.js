@@ -62,7 +62,7 @@ export default class Dashboard extends PureComponent {
 
   getOption = () => {
     if (!this.myChart) return;
-    const { trades } = this.props;
+    const { trades, trials = 21 } = this.props;
     const latestData = trades[trades.length - 1];
     if (!latestData) return;
     const { buy, stock } = latestData;
@@ -91,7 +91,7 @@ export default class Dashboard extends PureComponent {
       },
       xAxis: {
         boundaryGap: false,
-        data: Array(22).fill('').map((_, index) => `Point ${index}`),
+        data: Array(trials + 1).fill('').map((_, index) => `Point ${index}`),
       },
       yAxis: {
         showMinLabel: false,

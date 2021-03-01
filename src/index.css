@@ -124,6 +124,15 @@ body {
   justify-content: center;
 }
 
+#question .question-radio > label {
+  margin-right: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  display: inline-flex;
+  align-items: center;
+}
+
 #question .question-head {
   font-weight: bold;
   color: rgba(0, 0, 0, 0.7);
