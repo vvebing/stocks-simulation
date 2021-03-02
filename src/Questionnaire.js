@@ -5,9 +5,9 @@ import { STOCK } from './App';
 const TABLE = [{
   key: '1',
   title: {
-    10: '1. 在本轮任务中，对于投资顾问购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
-    20: '1. 在本轮任务中，对于您自己购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
-    30: '1. 在本轮任务中，对于投资顾问推荐下您自己购买的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+    10: '1. 在本轮任务中，对于<b>投资顾问购买</b>的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+    20: '1. 在本轮任务中，对于<b>您自己购买</b>的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+    30: '1. 在本轮任务中，对于<b>投资顾问推荐下您自己购买</b>的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
   },
   head: [
     '',
@@ -32,9 +32,9 @@ const TABLE = [{
 }, {
   key: '2',
   title: {
-    10: '2. 在本轮任务中，对于投资顾问购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
-    20: '2. 在本轮任务中，对于您自己购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
-    30: '2. 在本轮任务中，对于投资顾问推荐下您自己购买的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+    10: '2. 在本轮任务中，对于<b>投资顾问购买</b>的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+    20: '2. 在本轮任务中，对于<b>您自己购买</b>的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+    30: '2. 在本轮任务中，对于<b>投资顾问推荐下您自己购买</b>的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
   },
   head: [
     '',
@@ -61,16 +61,16 @@ const OPTION = [{
   key: '3',
   lowPoint: '压力非常小',
   highPoint: '压力非常大',
-  10: '3. 在本轮任务中，您在卖出投资顾问购买的300股XX股票时有多大压力？',
-  20: '3. 在本轮任务中，您在卖出最开始自己选择并购买的300股XX股票时有多大压力？',
-  30: '3. 在本轮任务中，您在卖出别人推荐下自己选择并购买的300股XX股票时有多大压力？',
+  10: '3. 在本轮任务中，您在卖出<b>投资顾问购买</b>的300股XX股票时有多大压力？',
+  20: '3. 在本轮任务中，您在卖出最开始<b>自己选择并购买</b>的300股XX股票时有多大压力？',
+  30: '3. 在本轮任务中，您在卖出<b>别人推荐下自己选择并购买</b>的300股XX股票时有多大压力？',
 }, {
   key: '4',
   lowPoint: '完全没有责任',
   highPoint: '负有完全责任',
-  10: '4. 在本轮任务中，若卖出投资顾问购买的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
-  20: '4. 在本轮任务中，若卖出最开始自己选择并购买的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
-  30: '4. 在本轮任务中，您在卖出别人推荐下自己选择并购买的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
+  10: '4. 在本轮任务中，若卖出<b>投资顾问购买</b>的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
+  20: '4. 在本轮任务中，若卖出最开始<b>自己选择并购买</b>的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
+  30: '4. 在本轮任务中，您在卖出<b>别人推荐下自己选择并购买</b>的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
 }];
 
 function Questionnaire({ trades, groupID, onQuestionSubmit }) {
@@ -120,23 +120,23 @@ function Questionnaire({ trades, groupID, onQuestionSubmit }) {
         TABLE.map((table, num) => (
           <Form.Item
             key={table.key}
-            label={table.title[groupID].replace('XX', STOCK[stock])}
+            label={<span dangerouslySetInnerHTML={{ __html: table.title[groupID].replace('XX', STOCK[stock]) }} />}
             style={{ flexDirection: 'unset' }}
           >
             <Row gutter={[8, 16]} className="question-head">
               {
                 table.head.map((title, index) => (
-                  <Col key={index} span={3} className="question-radio">{title}</Col>
+                  <Col key={index} span={index === 0 ? 10 : 2} className="question-radio">{title}</Col>
                 ))
               }
             </Row>
             {
               table.columns.map((column, idx) => (
                 <Row key={idx} gutter={[8, 16]} className="question-column">
-                  <Col span={3}>{column}</Col>
+                  <Col span={10}>{column}</Col>
                   {
                     Array(7).fill('').map((_, index) => (
-                      <Col key={index} span={3} className="question-radio">
+                      <Col key={index} span={2} className="question-radio">
                         <Radio
                           value={index + 1}
                           checked={tableArray[num][idx] && +tableArray[num][idx] === index + 1}
@@ -156,7 +156,7 @@ function Questionnaire({ trades, groupID, onQuestionSubmit }) {
           <Form.Item
             key={option.key}
             name={option.key}
-            label={option[groupID].replace('XX', STOCK[stock])}
+            label={<span dangerouslySetInnerHTML={{ __html: option[groupID].replace('XX', STOCK[stock]) }} />}
             style={{ flexDirection: 'unset' }}
             rules={[
               { required: true, message: '该项为必选项' }

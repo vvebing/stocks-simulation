@@ -148,10 +148,10 @@ function Preparation({ trades, groupID, handleStart }) {
                               <Typography.Paragraph>
                                 您现在拥有
                                 <Typography.Text keyboard>5000</Typography.Text>
-                                个虚拟金币作为投资本金，股票的所有交易策略
+                                个虚拟金币作为投资本金，<b>股票的所有交易策略
                                 <Typography.Text strong>
                                   由您本人独立作出
-                                </Typography.Text>
+                                </Typography.Text></b>
                                 ，盈亏由您本人承担。
                               </Typography.Paragraph>
                               <Typography.Paragraph>
@@ -195,9 +195,9 @@ function Preparation({ trades, groupID, handleStart }) {
                                   个虚拟金币作为投资本金，当前股价均为
                                   <Typography.Text keyboard>10</Typography.Text>
                                   金币，请您在
-                                  <Typography.Text strong>参考投资顾问的建议</Typography.Text>
+                                  <b><Typography.Text strong>参考投资顾问的建议</Typography.Text>
                                   后，
-                                  <Typography.Text strong>自行作出投资决策</Typography.Text>
+                                  <Typography.Text strong>自行作出投资决策</Typography.Text></b>
                                   ，盈亏由您本人承担。
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
@@ -213,7 +213,7 @@ function Preparation({ trades, groupID, handleStart }) {
                         <Typography>
                           <Typography.Paragraph>
                             <Typography.Text strong>
-                              投资顾问考察市场行情与该股票历史走向后，
+                              <b>投资顾问考察市场行情与该股票历史走向后</b>，
                               <Typography.Text mark>
                                 帮您购入
                                 <Typography.Text keyboard>300</Typography.Text>
@@ -232,7 +232,7 @@ function Preparation({ trades, groupID, handleStart }) {
                             <Typography>
                               <Typography.Paragraph>
                                 <Typography.Text strong>
-                                  您自行选择购入
+                                  <b>您自行选择购入</b>
                                   <Typography.Text keyboard>300</Typography.Text>
                                   股{STOCK[stock]}股票，买入价为
                                   <Typography.Text keyboard>10</Typography.Text>
@@ -247,7 +247,7 @@ function Preparation({ trades, groupID, handleStart }) {
                               <Typography>
                                 <Typography.Paragraph>
                                   <Typography.Text strong>
-                                    您在投资顾问的建议下，自行选择购入
+                                    您<b>在投资顾问的建议下，自行选择购入</b>
                                     <Typography.Text keyboard>300</Typography.Text>
                                     股{STOCK[stock]}股票，买入价为
                                     <Typography.Text keyboard>10</Typography.Text>

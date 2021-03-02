@@ -28,7 +28,7 @@ export const STOCK = {
   C: '丙',
   D: '丁',
   E: '戊',
-  Practice: '练习环节',
+  Practice: '',
 };
 const CLEAR_PASSWORD = '981107';
 

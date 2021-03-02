@@ -110,13 +110,13 @@ function Notice({ visible, noticed, onCancel }) {
         <Typography>
           <Title level={3}>您好！欢迎参加实验！</Title>
           <Paragraph>请在正式进入实验前仔细阅读并理解指导语。</Paragraph>
-          <Paragraph>本次实验任务是一个简化的模拟股票交易任务。</Paragraph>
+          <Paragraph>本次实验任务是一个股票交易任务。</Paragraph>
           <Paragraph>
             模拟股票交易任务最终的
             <Text strong>投资收益</Text>
             将会与您的
             <Text strong>实验报酬</Text>
-            有关。
+            挂钩。
           </Paragraph>
           <Paragraph>
             在实验过程中，如有任何与实验规则有关的问题或意外状况，
@@ -125,10 +125,8 @@ function Notice({ visible, noticed, onCancel }) {
           </Paragraph>
           <Paragraph>
             您一共会进行
-            <Text strong>5轮</Text>
-            模拟股票交易任务，每一轮有
-            <Text strong>21个交易期</Text>
-            。在每一个交易期，屏幕首先会显示：
+            <Text strong>若干轮</Text>
+            模拟股票交易任务，每一轮交易都是独立的、每一轮有若干个交易期。在每一个交易期，屏幕首先会显示：
           </Paragraph>
           <Paragraph>
             <ul>
@@ -150,13 +148,13 @@ function Notice({ visible, noticed, onCancel }) {
               <li>
                 <Space>
                   <Text strong>当前盈亏</Text>
-                  即您当前所持有的股票份额所产生的浮动盈亏
+                  即您当前所持有的股票份额所产生的盈亏
                 </Space>
               </li>
               <li>
                 <Space>
                   <Text strong>总盈亏</Text>
-                  累计盈亏，即当前盈亏 + 前期卖出部分的盈亏
+                  累计盈亏，即当前盈亏 + 已兑现的盈亏
                   <Button
                     type="link"
                     onClick={openEgModal}
@@ -177,7 +175,7 @@ function Notice({ visible, noticed, onCancel }) {
             、
             <Text keyboard>卖出</Text>
             或
-            <Text keyboard>继续持有</Text>
+            <Text keyboard>持仓不变</Text>
             （既不买入也不卖出）该股票，并
             <Text strong>选择对应操作的股票数量</Text>
             。
@@ -211,7 +209,7 @@ function Notice({ visible, noticed, onCancel }) {
                 。
               </li>
               <li>不能进行空头交易（卖出股票的数量多于目前所持有的股票份额）。</li>
-              <li>现金余额不得亏损，不能借钱。</li>
+              <li>现金余额不得为负，不能借钱。</li>
               <li>股票的交易不会产生交易费用。</li>
             </ol>
           </Paragraph>

@@ -55,6 +55,16 @@ body {
   padding: 16px 24px;
 }
 
+#main b {
+  font-size: 16px;
+  background-color: #FF4D4F;
+}
+
+#main b,
+#main b span {
+  color: #FFFFFF;
+}
+
 #preparation {
   padding: 16px 24px;
   height: 910px;
