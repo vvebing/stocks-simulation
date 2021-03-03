@@ -117,6 +117,13 @@ function Preparation({ trades, groupID, handleStart }) {
                             后，才能进入交易市场进行交易。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
+                            在本轮交易中，在
+                            <Typography.Text keyboard>Point0</Typography.Text>
+                            <b>将由投资顾问先帮您选择并买入</b>
+                            <Typography.Text keyboard>300</Typography.Text>
+                            股原始股，买入后，其他股票交易决策将由您本人独立作出。
+                          </Typography.Paragraph>
+                          <Typography.Paragraph>
                             <Typography.Text strong>
                               您现在拥有
                               <Typography.Text keyboard>5000</Typography.Text>
@@ -169,7 +176,7 @@ function Preparation({ trades, groupID, handleStart }) {
                                   <Typography.Text keyboard>Point0</Typography.Text>
                                   。
                                   <Typography.Text strong>
-                                    投资顾问考察市场行情与该股票历史走向后，认为市场上“甲、乙、丙、丁、戊”这五只股票股票上涨概率较大，建议您买入。
+                                    <b>投资顾问</b>考察市场行情与该股票历史走向后，认为市场上“甲、乙、丙、丁、戊”这五只股票股票上涨概率较大，<b>建议您买入</b>。
                                   </Typography.Text>
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
@@ -212,17 +219,13 @@ function Preparation({ trades, groupID, handleStart }) {
                       groupID === 10 ?
                         <Typography>
                           <Typography.Paragraph>
-                            <Typography.Text strong>
-                              <b>投资顾问考察市场行情与该股票历史走向后</b>，
-                              <Typography.Text mark>
-                                帮您购入
-                                <Typography.Text keyboard>300</Typography.Text>
-                                股{STOCK[stock]}股票
-                              </Typography.Text>
-                              ，买入价为
-                              <Typography.Text keyboard>10</Typography.Text>
-                              金币
-                            </Typography.Text>
+                            <b>投资顾问考察市场行情与该股票历史走向后，
+                              帮您购入</b>
+                              <Typography.Text keyboard>300</Typography.Text>
+                              股{STOCK[stock]}股票
+                            ，买入价为
+                            <Typography.Text keyboard>10</Typography.Text>
+                            金币。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
                             买入后，股票的其他所有交易决策由您本人独立作出，盈亏由您本人承担。

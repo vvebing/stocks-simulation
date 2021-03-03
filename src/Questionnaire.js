@@ -66,11 +66,18 @@ const OPTION = [{
   30: '3. 在本轮任务中，您在卖出<b>别人推荐下自己选择并购买</b>的300股XX股票时有多大压力？',
 }, {
   key: '4',
-  lowPoint: '完全没有责任',
-  highPoint: '负有完全责任',
-  10: '4. 在本轮任务中，若卖出<b>投资顾问购买</b>的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
-  20: '4. 在本轮任务中，若卖出最开始<b>自己选择并购买</b>的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
-  30: '4. 在本轮任务中，您在卖出<b>别人推荐下自己选择并购买</b>的300股XX股票后发现卖错了，您认为您需要为这样的错误决策负多大的责任？',
+  points: [
+    { key: -3, text: '非常错误' },
+    { key: -2, text: '比较错误' },
+    { key: -1, text: '有点错误' },
+    { key: 0, text: '说不清' },
+    { key: 1, text: '有点正确' },
+    { key: 2, text: '比较正确' },
+    { key: 3, text: '非常正确' },
+  ],
+  10: '4. 在本轮任务中，当股价下跌时，<b>别人帮你选择</b>这只股票这一决定是？',
+  20: '4. 在本轮任务中，当股价下跌时，<b>自己选择</b>这只股票这一决定是？',
+  30: '4. 在本轮任务中，当股价下跌时，<b>在别人推荐下自己选择</b>这只股票这一决定是？',
 }];
 
 function Questionnaire({ trades, groupID, onQuestionSubmit }) {
@@ -163,19 +170,35 @@ function Questionnaire({ trades, groupID, onQuestionSubmit }) {
             ]}
           >
             <Row gutter={[8, 16]} wrap={false}>
-              <Col span={3}>{option.lowPoint}</Col>
-                {
-                  Array(7).fill('').map((_, index) => (
-                    <Col key={index} span={3} className="question-radio">
+              {
+                (option.lowPoint && option.highPoint) ?
+                <>
+                  <Col span={3}>{option.lowPoint}</Col>
+                  {
+                    Array(7).fill('').map((_, index) => (
+                      <Col key={index} span={3} className="question-radio">
+                        <Radio
+                          value={index + 1}
+                          checked={optionArray[num] && +optionArray[num] === index + 1}
+                          onClick={() => changeOption(num, index + 1)}
+                        >{index + 1}</Radio>
+                      </Col>
+                    ))
+                  }
+                  <Col span={3}>{option.highPoint}</Col>
+                </> :
+                (
+                  option.points && option.points.map((point, index) => (
+                    <Col key={index} span={4} className="question-radio">
                       <Radio
-                        value={index + 1}
-                        checked={optionArray[num] && +optionArray[num] === index + 1}
-                        onClick={() => changeOption(num, index + 1)}
-                      >{index + 1}</Radio>
+                        value={point.key}
+                        checked={optionArray[num] !== undefined && +optionArray[num] === point.key}
+                        onClick={() => changeOption(num, point.key)}
+                      >{`${point.key} ${point.text}`}</Radio>
                     </Col>
                   ))
-                }
-              <Col span={3}>{option.highPoint}</Col>
+                )
+              }
             </Row>
           </Form.Item>
         ))
