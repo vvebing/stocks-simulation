@@ -154,7 +154,7 @@ export default class App extends PureComponent {
     Modal.confirm({
       okText: '确定',
       cancelText: '取消',
-      title: '是否清除实验数据',
+      title: '是否清除当前轮实验数据',
       content: [
         <p key="text">清除实验数据后，您需要重新操作！请谨慎操作！</p>,
         <p key="password">请主试输入密码：<Input.Password onChange={(event) => {this.clearPassword = event.target.value}} /></p>,
@@ -166,11 +166,15 @@ export default class App extends PureComponent {
         }
         this.clearPassword = '';
 
-        await localForage.removeItem('trades');
+        const { trades } = this.state;
+        const nextTrades = trades.slice();
+        nextTrades.pop();
         this.setState({
-          trades: [],
           status: 0,
-          totalProfit: 0,
+          trades: nextTrades,
+          totalProfit: calcProfit(nextTrades),
+        }, () => {
+          localForage.setItem('trades', nextTrades);
         });
       },
     });
@@ -387,7 +391,7 @@ export default class App extends PureComponent {
           extra={[
             <Button key="notice" type="link" onClick={this.openNotice}>实验须知</Button>,
             <Button key="userInfo" danger type="primary" onClick={this.clearUserInfo}>清除用户数据</Button>,
-            <Button key="trades" danger onClick={this.clearDashboard}>清除实验数据</Button>,
+            <Button key="trades" danger onClick={this.clearDashboard}>清除当前轮实验数据</Button>,
           ]}
         >
           <div className="content">

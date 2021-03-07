@@ -30,7 +30,7 @@ function Preparation({ trades, groupID, handleStart }) {
         current !== 1 && setCurrent(1);
         return message.warning('请选择一支股票');
       }
-      const stocks = Object.keys(STOCK).filter((s) => trades.findIndex((trade) => trade.stock === s) === -1);
+      const stocks = Object.keys(STOCK).filter((s) => s !== 'Practice' && trades.findIndex((trade) => trade.stock === s) === -1);
       selectStock(stocks[Math.floor(Math.random() * stocks.length)]);
     }
     if (current >= 3) {
