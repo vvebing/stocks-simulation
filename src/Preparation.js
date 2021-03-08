@@ -118,7 +118,7 @@ function Preparation({ trades, groupID, handleStart }) {
                           <Typography.Paragraph>
                             您现在拥有
                             <Typography.Text keyboard>2000</Typography.Text>
-                            金币的现金。另外，投资顾问您选择一支股票，并<b>赠送</b>
+                            金币的现金。另外，投资顾问将选择一支股票，并<b>赠送</b>
                             <Typography.Text keyboard>300</Typography.Text>
                             股该股票给您。
                           </Typography.Paragraph>
