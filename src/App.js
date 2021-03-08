@@ -22,14 +22,8 @@ const Preparation = lazy(() => import('./Preparation'));
 const PracticeTest = lazy(() => import('./PracticeTest'));
 const Questionnaire = lazy(() => import('./Questionnaire'));
 
-export const STOCK = {
-  A: '甲',
-  B: '乙',
-  C: '丙',
-  D: '丁',
-  E: '戊',
-  Practice: '',
-};
+export const SELECTS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛'];
+const STOCKS = ['A', 'B', 'C', 'D', 'E'];
 const CLEAR_PASSWORD = '981107';
 
 export default class App extends PureComponent {
@@ -49,12 +43,13 @@ export default class App extends PureComponent {
       trades: [],
       /**
        * [{
+       *  select: number,
        *  stock: A | B | C | D | E,
        *  buy: [],  // length = 21
        *  sell: [], // length = 21
-       *  mood: [], // length = 4
        * }]
        */
+      moods: [],
       status: 0,
       error: false,
       totalProfit: 0,
@@ -82,10 +77,12 @@ export default class App extends PureComponent {
         return this.setState(nextState);
       }
       const trades = await localForage.getItem('trades') ?? [];
+      const moods = await localForage.getItem('moods') ?? [];
       const totalProfit = calcProfit(trades);
-      const status = getExperimentStatus(trades);
+      const status = getExperimentStatus(trades, moods);
       this.setState({
         ...nextState,
+        moods,
         trades,
         status,
         totalProfit,
@@ -142,6 +139,7 @@ export default class App extends PureComponent {
           noticed: false,
           showNotice: true,
           trades: [],
+          moods: [],
           status: 0,
           practice: {},
           totalProfit: 0,
@@ -191,6 +189,7 @@ export default class App extends PureComponent {
       this.setState({
         error: false,
         trades: [],
+        moods: [],
         status: 0,
       });
     } else {
@@ -198,13 +197,13 @@ export default class App extends PureComponent {
     }
   }
 
-  handleStart = (stock) => {
+  handleStart = (select) => {
     this.setState((state) => ({
       trades: [...state.trades, {
-        stock,
+        select,
+        stock: STOCKS[state.trades.length],
         buy: [300],
         sell: [0],
-        mood: [],
       }],
       status: 1,
     }), () => {
@@ -217,21 +216,23 @@ export default class App extends PureComponent {
     const { trades } = this.state;
     const totalProfit = calcProfit(trades);
     this.setState({
-      status: 2,
+      status: 0,
       totalProfit,
     });
   }
 
   handleTrade = (option, amount) => {
-    const { trades } = this.state;
+    const { trades, moods } = this.state;
     const latestData = trades[trades.length - 1];
     if (latestData) {
-      const { buy, sell, mood } = latestData;
+      const { buy, sell } = latestData;
       if (buy.length !== sell.length) {
         return this.setState({ status: -1 });
       }
       if (buy.length >= 21) {
-        if (mood.length < 4) {
+        if (trades.length < 5) {
+          this.setState({ status: 0 });
+        } else if (moods.length < 4) {
           this.setState({ status: 2 });
         } else {
           this.setState({ status: 3 });
@@ -264,24 +265,12 @@ export default class App extends PureComponent {
     }
   }
 
-  onQuestionSubmit = (mood) => {
-    const { trades } = this.state;
-    const latestData = trades[trades.length - 1];
-    if (!latestData) {
-      return this.setState({
-        status: -1,
-      });
-    }
-    const newTrades = trades.slice();
-    newTrades.splice(-1, 1, {
-      ...latestData,
-      mood,
-    });
+  onQuestionSubmit = (moods) => {
     this.setState({
-      trades: newTrades,
-      status: newTrades.length >= 5 ? 3 : 0,
+      moods,
+      status: 3,
     }, () => {
-      localForage.setItem('trades', newTrades);
+      localForage.setItem('moods', moods);
     });
   }
 
@@ -301,8 +290,8 @@ export default class App extends PureComponent {
         }
         this.clearPassword = '';
 
-        const { uuid, groupID, trades } = this.state;
-        saveTextAsFile(calcFinalData(trades, uuid, groupID), uuid, groupID);
+        const { uuid, groupID, trades, moods } = this.state;
+        saveTextAsFile(calcFinalData(trades, moods, uuid, groupID), uuid, groupID);
       },
     });
   }
@@ -364,12 +353,12 @@ export default class App extends PureComponent {
         }
         case 1: {
           subTitle = `正在进行第${trades.length}轮实验`;
-          childComponent = <Dashboard trades={trades} handleTrade={this.handleTrade} handleNext={this.handleNext} />;
+          childComponent = <Dashboard trades={trades} groupID={groupID} handleTrade={this.handleTrade} handleNext={this.handleNext} />;
           break;
         }
         case 2: {
           subTitle = `已结束第${trades.length}轮实验`;
-          childComponent = <Questionnaire trades={trades} groupID={groupID} onQuestionSubmit={this.onQuestionSubmit} />;
+          childComponent = <Questionnaire groupID={groupID} onQuestionSubmit={this.onQuestionSubmit} />;
           break;
         }
         case 3: {
@@ -422,13 +411,12 @@ export default class App extends PureComponent {
  * @param {Array} trades 实验数据
  * @returns {(-1|0|1|2|3)} 实验状态
  */
-function getExperimentStatus(trades) {
+function getExperimentStatus(trades, moods) {
   let status;
   const latestData = trades[trades.length - 1];
   const {
     buy = [],
     sell = [],
-    mood = [],
   } = latestData || {};
   if (!latestData) {
     status = 0;
@@ -436,17 +424,16 @@ function getExperimentStatus(trades) {
     buy.length >= 21 ||
     sell.length >= 21
   ) {
-    if (mood.length < 4) {
-      status = 2;
-    } else if (trades.length >= 5) {
-      status = 3;
-    } else {
+    if (trades.length < 5) {
       status = 0;
+    } else if (moods.length < 4) {
+      status = 2;
+    } else {
+      status = 3;
     }
   } else if (
     buy.length < 21 &&
-    buy.length === sell.length &&
-    mood.length === 0
+    buy.length === sell.length
   ) {
     status = 1;
   } else {
@@ -508,11 +495,11 @@ function calcProfit(trades) {
   return +totalProfit.toFixed(2);
 }
 
-function calcFinalData(rawData, uuid, groupID) {
+function calcFinalData(rawData, moods, uuid, groupID) {
   const trades = [];
   for (let i = 0; i < rawData.length; i += 1) {
     const trials = [];
-    const { buy, sell, mood, stock } = rawData[i];
+    const { buy, sell, stock } = rawData[i];
     const trade = {
       buy: [300],
       sell: [0],
@@ -602,12 +589,12 @@ function calcFinalData(rawData, uuid, groupID) {
       'Sell After Fall': sellAfterFall, // 股票下跌后卖出股票数量
       'Trials': trials, // 每个 trial 的交易数据数组
       'DE': +(gainRatio - lossRatio).toFixed(4),  // DE
-      'Stock': stock,  // 股票类型
-      'Mood': mood, // 情绪调查
+      'Stock': stock, // 股票类型
     });
   }
   return {
-    'User ID': uuid, // 用户 ID
+    'Mood': moods,  // 情绪调查
+    'User ID': uuid,  // 用户 ID
     'Trades': trades, // 交易数据
     'Group ID': groupID,  // 用户选择分组
     'Total Profit': trades.reduce((total, trade) => total + trade['Total Profit'], 0),  // 五轮实验的总盈亏

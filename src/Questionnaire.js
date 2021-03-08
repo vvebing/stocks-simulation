@@ -1,13 +1,27 @@
 import { Button, Col, Form, message, Radio, Row } from 'antd';
 import React, { useState } from 'react';
-import { STOCK } from './App';
 
-const TABLE = [{
+const OPTION = [{
   key: '1',
+  lowPoint: '完全不怀疑',
+  highPoint: '非常怀疑',
+  10: '1. 交易前投资顾问选择了他认为上涨概率大的股票赠送给您，但当股票整体走势下跌时，你是否会怀疑他作出的这一选择的正确性？[单选题]',
+  20: '1. 交易前您选择买入了您认为上涨概率大的股票，但当股票整体走势下跌时，你是否会怀疑自己这一选择的正确性？[单选题]',
+  30: '1. 交易前投资顾问推荐给您他认为上涨概率大的几只股票，您选择买入了其中一只他推荐的股票，但当股票整体走势下跌时，你是否会怀疑自己在他人推荐下自己作出的这一选择的正确性？[单选题]',
+}, {
+  key: '2',
+  lowPoint: '完全没有意愿',
+  highPoint: '非常有意愿',
+  10: '2. 当股价下跌时，您有多大意愿卖出别人赠送给您的这300股股票？[单选题]',
+  20: '2. 当股价下跌时，您有多大意愿卖出自己最初选择买入的300股股票？[单选题]',
+  30: '2. 当股价下跌时，您有多大意愿卖出自己在别人推荐下选择并买入的300股股票？[单选题]',
+}];
+const TABLE = [{
+  key: '3',
   title: {
-    10: '1. 在本轮任务中，对于<b>投资顾问购买</b>的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
-    20: '1. 在本轮任务中，对于<b>您自己购买</b>的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
-    30: '1. 在本轮任务中，对于<b>投资顾问推荐下您自己购买</b>的300股XX股票，面对以下情况时(如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况)，您在多大程度上感受到自豪的情绪[矩阵单选题]',
+    10: '3. 请回忆您在交易投资顾问赠送的300股初始股票过程中，当面对如下状况时，您在多大程度上感受到自豪的情绪？（若没有遇到此类情况，请想象您会如何选择）[矩阵单选题]',
+    20: '3. 请回忆您在交易自己购买的300股初始股票过程中，当面对如下状况时，您在多大程度上感受到自豪的情绪？（若没有遇到此类情况，请想象您会如何选择）[矩阵单选题]',
+    30: '3. 请回忆您在交易在他人推荐下自己购买的300股初始股票过程中，当面对如下状况时，您在多大程度上感受到自豪的情绪？（若没有遇到此类情况，请想象您会如何选择）[矩阵单选题]',
   },
   head: [
     '',
@@ -30,11 +44,11 @@ const TABLE = [{
     '股价下跌后卖出，下一交易期股价上涨',
   ],
 }, {
-  key: '2',
+  key: '4',
   title: {
-    10: '2. 在本轮任务中，对于<b>投资顾问购买</b>的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
-    20: '2. 在本轮任务中，对于<b>您自己购买</b>的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
-    30: '2. 在本轮任务中，对于<b>投资顾问推荐下您自己购买</b>的300股XX股票，面对以下情况时 (如果在本轮任务中，没有出现以下某种或者某些情况，请想象出现了这些情况) ，您在多大程度上感受到后悔的情绪[矩阵单选题]',
+    10: '4. 请回忆您在交易投资顾问赠送的300股初始股票过程中，当面对如下状况时，您在多大程度上感受到后悔的情绪？（若没有遇到此类情况，请想象您会如何选择）[矩阵单选题]',
+    20: '4. 请回忆您在交易自己购买的300股初始股票过程中，当面对如下状况时，您在多大程度上感受到后悔的情绪？（若没有遇到此类情况，请想象您会如何选择）[矩阵单选题]',
+    30: '4. 请回忆您在交易在他人推荐下自己购买的300股初始股票过程中，当面对如下状况时，您在多大程度上感受到后悔的情绪？（若没有遇到此类情况，请想象您会如何选择）[矩阵单选题]',
   },
   head: [
     '',
@@ -57,30 +71,8 @@ const TABLE = [{
     '股价下跌后卖出，下一交易期股价下跌',
   ],
 }];
-const OPTION = [{
-  key: '3',
-  lowPoint: '压力非常小',
-  highPoint: '压力非常大',
-  10: '3. 在本轮任务中，您在卖出<b>投资顾问购买</b>的300股XX股票时有多大压力？',
-  20: '3. 在本轮任务中，您在卖出最开始<b>自己选择并购买</b>的300股XX股票时有多大压力？',
-  30: '3. 在本轮任务中，您在卖出<b>别人推荐下自己选择并购买</b>的300股XX股票时有多大压力？',
-}, {
-  key: '4',
-  points: [
-    { key: -3, text: '非常错误' },
-    { key: -2, text: '比较错误' },
-    { key: -1, text: '有点错误' },
-    { key: 0, text: '说不清' },
-    { key: 1, text: '有点正确' },
-    { key: 2, text: '比较正确' },
-    { key: 3, text: '非常正确' },
-  ],
-  10: '4. 在本轮任务中，当股价下跌时，你认为<b>别人帮你选择</b>XX股票这一决定是？',
-  20: '4. 在本轮任务中，当股价下跌时，你认为<b>自己选择</b>XX股票这一决定是？',
-  30: '4. 在本轮任务中，当股价下跌时，你认为<b>在别人推荐下自己选择</b>XX股票这一决定是？',
-}];
 
-function Questionnaire({ trades, groupID, onQuestionSubmit }) {
+function Questionnaire({ groupID, onQuestionSubmit }) {
   const [form] = Form.useForm();
   const [tableArray, toggleTable] = useState([[], []]);
   const [optionArray, toggleOption] = useState([]);
@@ -101,33 +93,61 @@ function Questionnaire({ trades, groupID, onQuestionSubmit }) {
   const checkAndSubmit = () => {
     for (let i = 0; i < tableArray.length; i += 1) {
       if (!tableArray[i].length) {
-        return message.warning(`请完成第${i + 1}题！`);
+        return message.warning(`请完成第${i + 3}题！`);
       }
       if (tableArray[i].length < 8) {
-        return message.warning(`第${i + 1}题第${tableArray[i].length + 1}个选项为必填项！`);
+        return message.warning(`第${i + 3}题第${tableArray[i].length + 1}个选项为必填项！`);
       }
       for (let j = 0; j < tableArray[i].length; j += 1) {
         if (!tableArray[i][j]) {
-          return message.warning(`第${i + 1}题第${j + 1}个选项为必填项！`);
+          return message.warning(`第${i + 3}题第${j + 1}个选项为必填项！`);
         }
       }
     }
     form.submit();
   };
-  const { stock } = trades[trades.length - 1] ?? {};
 
   return (
     <Form
       form={form}
       id="question"
       layout="vertical"
-      onFinish={() => onQuestionSubmit([...tableArray, ...optionArray])}
+      onFinish={() => onQuestionSubmit([...optionArray, ...tableArray])}
     >
+      {
+        OPTION.map((option, num) => (
+          <Form.Item
+            key={option.key}
+            name={option.key}
+            label={<span dangerouslySetInnerHTML={{ __html: option[groupID] }} />}
+            style={{ flexDirection: 'unset' }}
+            rules={[
+              { required: true, message: '该项为必选项' }
+            ]}
+          >
+            <Row gutter={[8, 16]} wrap={false}>
+              <Col span={3}>{option.lowPoint}</Col>
+              {
+                Array(7).fill('').map((_, index) => (
+                  <Col key={index} span={3} className="question-radio">
+                    <Radio
+                      value={index + 1}
+                      checked={optionArray[num] && +optionArray[num] === index + 1}
+                      onClick={() => changeOption(num, index + 1)}
+                    >{index + 1}</Radio>
+                  </Col>
+                ))
+              }
+              <Col span={3}>{option.highPoint}</Col>
+            </Row>
+          </Form.Item>
+        ))
+      }
       {
         TABLE.map((table, num) => (
           <Form.Item
             key={table.key}
-            label={<span dangerouslySetInnerHTML={{ __html: table.title[groupID].replace('XX', STOCK[stock]) }} />}
+            label={<span dangerouslySetInnerHTML={{ __html: table.title[groupID] }} />}
             style={{ flexDirection: 'unset' }}
           >
             <Row gutter={[8, 16]} className="question-head">
@@ -155,51 +175,6 @@ function Questionnaire({ trades, groupID, onQuestionSubmit }) {
                 </Row>
               ))
             }
-          </Form.Item>
-        ))
-      }
-      {
-        OPTION.map((option, num) => (
-          <Form.Item
-            key={option.key}
-            name={option.key}
-            label={<span dangerouslySetInnerHTML={{ __html: option[groupID].replace('XX', STOCK[stock]) }} />}
-            style={{ flexDirection: 'unset' }}
-            rules={[
-              { required: true, message: '该项为必选项' }
-            ]}
-          >
-            <Row gutter={[8, 16]} wrap={false}>
-              {
-                (option.lowPoint && option.highPoint) ?
-                <>
-                  <Col span={3}>{option.lowPoint}</Col>
-                  {
-                    Array(7).fill('').map((_, index) => (
-                      <Col key={index} span={3} className="question-radio">
-                        <Radio
-                          value={index + 1}
-                          checked={optionArray[num] && +optionArray[num] === index + 1}
-                          onClick={() => changeOption(num, index + 1)}
-                        >{index + 1}</Radio>
-                      </Col>
-                    ))
-                  }
-                  <Col span={3}>{option.highPoint}</Col>
-                </> :
-                (
-                  option.points && option.points.map((point, index) => (
-                    <Col key={index} span={4} className="question-radio">
-                      <Radio
-                        value={point.key}
-                        checked={optionArray[num] !== undefined && +optionArray[num] === point.key}
-                        onClick={() => changeOption(num, point.key)}
-                      >{`${point.key} ${point.text}`}</Radio>
-                    </Col>
-                  ))
-                )
-              }
-            </Row>
           </Form.Item>
         ))
       }

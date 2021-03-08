@@ -1,7 +1,6 @@
 import { Button, Card, Col, Descriptions, message, Radio, Result, Row, Steps, Typography } from 'antd';
 import React, { useState } from 'react';
-import Thumbnail from './Thumbnail.jpg';
-import { STOCK, useInterval } from './App';
+import { SELECTS, useInterval } from './App';
 
 const STEPS = [
   '准备',
@@ -11,7 +10,7 @@ const STEPS = [
 ];
 
 function Preparation({ trades, groupID, handleStart }) {
-  const [stock, selectStock] = useState();
+  const [select, selectStock] = useState();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(60);
   const [isRunning, toggleIsRunning] = useState(true);
@@ -25,16 +24,16 @@ function Preparation({ trades, groupID, handleStart }) {
   }, isRunning ? 1000 : null);
 
   const next = () => {
-    if (current >= 1 && !stock) {
+    if (current >= 1 && select === undefined) {
       if (groupID !== 10) {
         current !== 1 && setCurrent(1);
         return message.warning('请选择一支股票');
       }
-      const stocks = Object.keys(STOCK).filter((s) => s !== 'Practice' && trades.findIndex((trade) => trade.stock === s) === -1);
-      selectStock(stocks[Math.floor(Math.random() * stocks.length)]);
+      const selects = SELECTS.filter((_, index) => trades.findIndex((trade) => +trade.select === index) === -1);
+      selectStock(Math.floor(Math.random() * selects.length));
     }
     if (current >= 3) {
-      return handleStart(stock);
+      return handleStart(select);
     }
     current < STEPS.length - 1 && setCurrent(current + 1);
     toggleIsRunning(false);
@@ -73,19 +72,19 @@ function Preparation({ trades, groupID, handleStart }) {
               <div id="step">
                 <Row justify="space-around">
                   {
-                    Object.entries(STOCK).slice(0, -1).map(([key, title]) => {
-                      const unselected = trades.findIndex((trade) => trade.stock === key) === -1;
+                    SELECTS.map((item, index) => {
+                      const unselected = trades.findIndex((trade) => trade.select === index) === -1;
                       return (
-                        <Col key={key} span={4}>
+                        <Col key={index} span={3}>
                           <Card
                             hoverable
-                            cover={<img alt="Thumbnail" src={Thumbnail} />}
-                            onClick={() => current === 1 && groupID !== 10 && unselected && selectStock(key)}
+                            title={`${item}股票`}
+                            onClick={() => current === 1 && groupID !== 10 && unselected && selectStock(index)}
                           >
                             <Radio
-                              checked={stock === key}
+                              checked={select === index}
                               disabled={current === 2 || !unselected || groupID === 10}
-                            >{`${title}股票`}</Radio>
+                            />
                           </Card>
                         </Col>
                       );
@@ -100,35 +99,23 @@ function Preparation({ trades, groupID, handleStart }) {
                           <Typography.Paragraph>
                             现在进入资产分配阶段
                             <Typography.Text keyboard>Point0</Typography.Text>
-                            。市场上有“甲、乙、丙、丁、戊”五只股票，这五只股票在
-                            <Typography.Text keyboard>Point0</Typography.Text>
-                            前期走势相似，当前股价均为
+                            。市场上有“甲、乙、丙、丁、戊、己、庚、辛”八只股票，这八只股票当前股价均为
                             <Typography.Text keyboard>10</Typography.Text>
                             金币，但是后期的上涨概率可能不同。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
-                            您只能
-                            <Typography.Text strong>选择其中一种</Typography.Text>
-                            进行交易，并且必须在
+                            您将进行五轮交易，每轮只对一支股票进行买卖，并且必须在
                             <Typography.Text keyboard>Point0</Typography.Text>
-                            <Typography.Text strong>购买
+                            通过自己购买或者接受他人赠送得到
                             <Typography.Text keyboard>300</Typography.Text>
-                            股</Typography.Text>
-                            后，才能进入交易市场进行交易。
+                            股股票后，才能进入交易市场进行交易。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
-                            在本轮交易中，在
-                            <Typography.Text keyboard>Point0</Typography.Text>
-                            <b>将由投资顾问先帮您选择并买入</b>
+                            您选择拥有
+                            <Typography.Text keyboard>2000</Typography.Text>
+                            金币的现金。另外，投资顾问将为您选择一支股票，并<b>赠送</b>
                             <Typography.Text keyboard>300</Typography.Text>
-                            股原始股，买入后，其他股票交易决策将由您本人独立作出。
-                          </Typography.Paragraph>
-                          <Typography.Paragraph>
-                            <Typography.Text strong>
-                              您现在拥有
-                              <Typography.Text keyboard>5000</Typography.Text>
-                              个虚拟金币作为投资本金。
-                            </Typography.Text>
+                            股改股票给您。
                           </Typography.Paragraph>
                         </Typography> : (
                           groupID === 20 ?
@@ -136,82 +123,52 @@ function Preparation({ trades, groupID, handleStart }) {
                               <Typography.Paragraph>
                                 现在进入资产分配阶段
                                 <Typography.Text keyboard>Point0</Typography.Text>
-                                。市场上有“甲、乙、丙、丁、戊”五只股票，这五只股票在
-                                <Typography.Text keyboard>Point0</Typography.Text>
-                                前期走势相似，当前股价均为
+                                。市场上有“甲、乙、丙、丁、戊、己、庚、辛”八只股票，这八只股票当前股价均为
                                 <Typography.Text keyboard>10</Typography.Text>
                                 金币，但是后期的上涨概率可能不同。
                               </Typography.Paragraph>
                               <Typography.Paragraph>
-                                您只能
-                                <Typography.Text strong>选择其中一种</Typography.Text>
-                                进行交易，并且必须在
+                                您将进行五轮交易，每轮只对一支股票进行买卖，并且必须在
                                 <Typography.Text keyboard>Point0</Typography.Text>
-                                <Typography.Text strong>购买
+                                通过自己购买或者接受他人赠送得到
                                 <Typography.Text keyboard>300</Typography.Text>
-                                股</Typography.Text>
-                                后，才能进入交易市场进行交易。
+                                股股票后，才能进入交易市场进行交易。
                               </Typography.Paragraph>
                               <Typography.Paragraph>
                                 您现在拥有
                                 <Typography.Text keyboard>5000</Typography.Text>
-                                个虚拟金币作为投资本金，<b>股票的所有交易策略
-                                <Typography.Text strong>
-                                  由您本人独立作出
-                                </Typography.Text></b>
-                                ，盈亏由您本人承担。
-                              </Typography.Paragraph>
-                              <Typography.Paragraph>
-                                当前股价均为
-                                <Typography.Text keyboard>10</Typography.Text>
-                                金币，请问您选择购入
+                                金币的现金作为本金。股票的所有交易都由您本人独立作出，盈亏由您本人承担，现在您需要<b>自己选择</b>一支股票并买入
                                 <Typography.Text keyboard>300</Typography.Text>
-                                股的哪只股票？
+                                股。
                               </Typography.Paragraph>
+                              <Typography.Paragraph>请问您选择购入哪支股票？</Typography.Paragraph>
                             </Typography> : (
                               groupID === 30 &&
                               <Typography>
                                 <Typography.Paragraph>
                                   现在进入资产分配阶段
                                   <Typography.Text keyboard>Point0</Typography.Text>
-                                  。
-                                  <Typography.Text strong>
-                                    <b>投资顾问</b>考察市场行情与该股票历史走向后，认为市场上“甲、乙、丙、丁、戊”这五只股票股票上涨概率较大，<b>建议您买入</b>。
-                                  </Typography.Text>
-                                </Typography.Paragraph>
-                                <Typography.Paragraph>
-                                  这五只股票在
-                                  <Typography.Text keyboard>Point0</Typography.Text>
-                                  前期走势相似，当前股价均为
+                                  。市场上有“甲、乙、丙、丁、戊、己、庚、辛”八只股票，这八只股票当前股价均为
                                   <Typography.Text keyboard>10</Typography.Text>
                                   金币，但是后期的上涨概率可能不同。
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
-                                  您只能
-                                  <Typography.Text strong>选择其中一种</Typography.Text>
-                                  进行交易，并且必须在
+                                  您将进行五轮交易，每轮只对一支股票进行买卖，并且必须在
                                   <Typography.Text keyboard>Point0</Typography.Text>
-                                  <Typography.Text strong>购买
+                                  通过自己购买或者接受他人赠送得到
                                   <Typography.Text keyboard>300</Typography.Text>
-                                  股</Typography.Text>
-                                  后，才能进入交易市场进行交易。
+                                  股股票后，才能进入交易市场进行交易。
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
                                   您现在拥有
                                   <Typography.Text keyboard>5000</Typography.Text>
-                                  个虚拟金币作为投资本金，当前股价均为
-                                  <Typography.Text keyboard>10</Typography.Text>
-                                  金币，请您在
-                                  <b><Typography.Text strong>参考投资顾问的建议</Typography.Text>
-                                  后，
-                                  <Typography.Text strong>自行作出投资决策</Typography.Text></b>
-                                  ，盈亏由您本人承担。
-                                </Typography.Paragraph>
-                                <Typography.Paragraph>
-                                  请问您选择购入
+                                  金币的现金作为本金。投资顾问考察市场行情与股票历史走向后，认为在这八支股票中，“甲、乙、丙、丁、戊”的上涨概率较大，推荐您买入。现在您需要选择一支股票并买入
                                   <Typography.Text keyboard>300</Typography.Text>
-                                  股的哪只股票？
+                                  股，请您在
+                                  <b>参考投资顾问的建议后自行作出选择</b>
+                                  。
                                 </Typography.Paragraph>
+                                <Typography.Paragraph>请问您选择购入哪支股票？</Typography.Paragraph>
                               </Typography>
                             )
                         )
@@ -219,46 +176,47 @@ function Preparation({ trades, groupID, handleStart }) {
                       groupID === 10 ?
                         <Typography>
                           <Typography.Paragraph>
-                            <b>投资顾问考察市场行情与该股票历史走向后，
-                              帮您购入</b>
+                            投资顾问在考察市场行情与股票历史走向后，认为{SELECTS[select]}股票上涨概率较大，因此
+                            <b>
+                              赠送您
                               <Typography.Text keyboard>300</Typography.Text>
-                              股{STOCK[stock]}股票
-                            ，买入价为
-                            <Typography.Text keyboard>10</Typography.Text>
-                            金币。
+                              股{SELECTS[select]}股票
+                            </b>
+                            ，即目前您拥有价值
+                            <Typography.Text keyboard>5000</Typography.Text>
+                            金币的总资产（现金：2000，股票：300 × 10 = 3000）。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
-                            买入后，股票的其他所有交易决策由您本人独立作出，盈亏由您本人承担。
+                            后续股票的所有交易决策都由您本人独立作出，盈亏由您本人承担。
                           </Typography.Paragraph>
                         </Typography> : (
                           groupID === 20 ?
                             <Typography>
                               <Typography.Paragraph>
-                                <Typography.Text strong>
-                                  <b>您自行选择购入</b>
+                                <b>
+                                  您自行选择并购入了
                                   <Typography.Text keyboard>300</Typography.Text>
-                                  股{STOCK[stock]}股票，买入价为
-                                  <Typography.Text keyboard>10</Typography.Text>
-                                  金币。
-                                </Typography.Text>
-                              </Typography.Paragraph>
-                              <Typography.Paragraph>
-                                现在，您的资产分配情况如下表：
+                                  股{SELECTS[select]}股票
+                                </b>
+                                ，即目前您拥有价值
+                                <Typography.Text keyboard>5000</Typography.Text>
+                                金币的总资产（现金：2000，股票：300 × 10 = 3000）。
                               </Typography.Paragraph>
                             </Typography> : (
                               groupID === 30 &&
                               <Typography>
                                 <Typography.Paragraph>
-                                  <Typography.Text strong>
-                                    您<b>在投资顾问的建议下，自行选择购入</b>
+                                  <b>
+                                    您在投资顾问的建议下，选择并购入了
                                     <Typography.Text keyboard>300</Typography.Text>
-                                    股{STOCK[stock]}股票，买入价为
-                                    <Typography.Text keyboard>10</Typography.Text>
-                                    金币。
-                                  </Typography.Text>
+                                    股{SELECTS[select]}股票
+                                  </b>
+                                  ，即目前您拥有价值
+                                  <Typography.Text keyboard>5000</Typography.Text>
+                                  金币的总资产（现金：2000，股票：300 × 10 = 3000）。
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
-                                  现在，您的资产分配情况如下表：
+                                  后续股票的所有交易决策都由您本人独立作出，盈亏由您本人承担。
                                 </Typography.Paragraph>
                               </Typography>
                             )
@@ -296,7 +254,7 @@ function Preparation({ trades, groupID, handleStart }) {
             <div id="step">
               <Typography>
                 <Typography.Title level={5}>
-                  接下来，进入股票交易环节。您选择的股票为{STOCK[stock]}，持有数量为
+                  接下来，进入股票交易环节。您选择的股票为{SELECTS[select]}，持有数量为
                   <Typography.Text keyboard>300</Typography.Text>
                   ，以及现金金币
                   <Typography.Text keyboard>2000</Typography.Text>
@@ -309,7 +267,7 @@ function Preparation({ trades, groupID, handleStart }) {
                   ）。
                 </Typography.Title>
                 <Typography.Title level={5}>
-                    点击确认进入正式交易任务。
+                  点击确认进入正式交易任务。
                 </Typography.Title>
               </Typography>
             </div>

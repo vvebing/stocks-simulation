@@ -7,7 +7,13 @@ import 'echarts/lib/component/markPoint';
 import { Button, Col, Descriptions, InputNumber, message, Modal, Row } from 'antd';
 
 import data from './data.json';
-import { calc, STOCK } from './App';
+import { calc, SELECTS } from './App';
+
+const GROUP = {
+  10: '顾问赠送您的',
+  20: '您自行选择的',
+  30: '您在顾问的建议下选择的',
+};
 
 export default class Dashboard extends PureComponent {
   constructor(props) {
@@ -62,10 +68,10 @@ export default class Dashboard extends PureComponent {
 
   getOption = () => {
     if (!this.myChart) return;
-    const { trades, trials = 21 } = this.props;
+    const { trades, trials = 21, groupID } = this.props;
     const latestData = trades[trades.length - 1];
     if (!latestData) return;
-    const { buy, stock } = latestData;
+    const { buy, stock, select } = latestData;
     const { next } = this.state;
 
     const option = {
@@ -77,7 +83,7 @@ export default class Dashboard extends PureComponent {
         containLabel: true,
       },
       title: {
-        text: `${STOCK[stock]}股票走势`,
+        text: `${GROUP[groupID]}${SELECTS[select]}股票走势`,
       },
       tooltip: {
         trigger: 'axis',
@@ -166,7 +172,7 @@ export default class Dashboard extends PureComponent {
       centered: true,
       okText: '确定',
       cancelText: '取消',
-      title: `${action}${STOCK[latestData.stock]}股票`,
+      title: `${action}${SELECTS[latestData.select]}股票`,
       content: '是否确认该操作？',
       onOk: () => {
         this.setState({

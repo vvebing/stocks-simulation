@@ -72,6 +72,14 @@ body {
   justify-content: space-between;
 }
 
+#preparation .ant-card-head {
+  padding: 0 18px;
+}
+
+#preparation .ant-card-body {
+  text-align: center;
+}
+
 #step {
   padding: 20px;
 }
