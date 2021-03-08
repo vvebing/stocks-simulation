@@ -216,7 +216,7 @@ export default class App extends PureComponent {
     const { trades } = this.state;
     const totalProfit = calcProfit(trades);
     this.setState({
-      status: 0,
+      status: trades.length < 5 ? 0 : 2,
       totalProfit,
     });
   }
@@ -593,7 +593,7 @@ function calcFinalData(rawData, moods, uuid, groupID) {
     });
   }
   return {
-    'Mood': moods,  // 情绪调查
+    'Moods': moods,  // 情绪调查
     'User ID': uuid,  // 用户 ID
     'Trades': trades, // 交易数据
     'Group ID': groupID,  // 用户选择分组

@@ -29,8 +29,13 @@ function Preparation({ trades, groupID, handleStart }) {
         current !== 1 && setCurrent(1);
         return message.warning('请选择一支股票');
       }
-      const selects = SELECTS.filter((_, index) => trades.findIndex((trade) => +trade.select === index) === -1);
-      selectStock(Math.floor(Math.random() * selects.length));
+      const selects = [];
+      SELECTS.forEach((_, index) => {
+        if (trades.findIndex((trade) => +trade.select === index) === -1) {
+          selects.push(index);
+        }
+      });
+      selectStock(selects[Math.floor(Math.random() * selects.length)]);
     }
     if (current >= 3) {
       return handleStart(select);
@@ -111,11 +116,11 @@ function Preparation({ trades, groupID, handleStart }) {
                             股股票后，才能进入交易市场进行交易。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
-                            您选择拥有
+                            您现在拥有
                             <Typography.Text keyboard>2000</Typography.Text>
                             金币的现金。另外，投资顾问将为您选择一支股票，并<b>赠送</b>
                             <Typography.Text keyboard>300</Typography.Text>
-                            股改股票给您。
+                            股该股票给您。
                           </Typography.Paragraph>
                         </Typography> : (
                           groupID === 20 ?
@@ -232,8 +237,8 @@ function Preparation({ trades, groupID, handleStart }) {
                     <Descriptions.Item label="持仓">0</Descriptions.Item>
                     <Descriptions.Item label="当前盈亏">0</Descriptions.Item>
                     <Descriptions.Item label="总盈亏">0</Descriptions.Item>
-                    <Descriptions.Item label="现金余额">5000</Descriptions.Item>
-                    <Descriptions.Item label="总资产">5000</Descriptions.Item>
+                    <Descriptions.Item label="现金余额">{groupID === 10 ? 2000 : 5000}</Descriptions.Item>
+                    <Descriptions.Item label="总资产">{groupID === 10 ? 2000 : 5000}</Descriptions.Item>
                   </Descriptions> :
                   <Descriptions bordered column={1} title="资产配置">
                     <Descriptions.Item label="当前股价">10.0</Descriptions.Item>

@@ -23,19 +23,19 @@ def write(dict_data):
                     for key0, value0 in value[index].items():
                         if key0 == 'Trials':
                             pandas.json_normalize(value0).to_excel(writer, sheet_name='Trade%d' % (index + 1), index=False)
-                        elif key0 == 'Mood':
-                            Mood = dict()
-                            for idx in range(len(value0)):
-                                if isinstance(value0[idx], list):
-                                    for i in range(len(value0[idx])):
-                                        Mood['%d.%d' % (idx + 1, i)] = value0[idx][i]
-                                else:
-                                    Mood[idx + 1] = value0[idx]
-                            pandas.json_normalize(Mood).to_excel(writer, sheet_name='Mood%d' % (index + 1), index=False)
                         else:
                             Trade[key0] = value0
                     Trades.append(Trade)
                 pandas.json_normalize(Trades).to_excel(writer, sheet_name='Trades', index=False)
+            elif key == 'Moods':
+                Moods = dict()
+                for index in range(len(value)):
+                    if isinstance(value[index], list):
+                        for i in range(len(value[index])):
+                            Moods['%d.%d' % (index + 1, i)] = value[index][i]
+                    else:
+                        Moods[index + 1] = value[index]
+                pandas.json_normalize(Moods).to_excel(writer, sheet_name='Moods', index=False)
             else:
                 General[key] = value
         pandas.json_normalize(General).to_excel(writer, sheet_name='General', index=False)
