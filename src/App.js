@@ -198,15 +198,18 @@ export default class App extends PureComponent {
   }
 
   handleStart = (select) => {
-    this.setState((state) => ({
-      trades: [...state.trades, {
-        select,
-        stock: STOCKS[state.trades.length],
-        buy: [300],
-        sell: [0],
-      }],
-      status: 1,
-    }), () => {
+    this.setState((state) => {
+      const stocks = STOCKS.filter((stock) => state.trades.findIndex((trade) => trade.stock === stock) === -1);
+      return {
+        trades: [...state.trades, {
+          select,
+          stock: stocks[Math.floor(Math.random() * stocks.length)],
+          buy: [300],
+          sell: [0],
+        }],
+        status: 1,
+      };
+    }, () => {
       const { trades } = this.state;
       localForage.setItem('trades', trades);
     });

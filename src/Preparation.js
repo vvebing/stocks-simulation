@@ -118,7 +118,7 @@ function Preparation({ trades, groupID, handleStart }) {
                           <Typography.Paragraph>
                             您现在拥有
                             <Typography.Text keyboard>2000</Typography.Text>
-                            金币的现金。另外，投资顾问将为您选择一支股票，并<b>赠送</b>
+                            金币的现金。另外，投资顾问您选择一支股票，并<b>赠送</b>
                             <Typography.Text keyboard>300</Typography.Text>
                             股该股票给您。
                           </Typography.Paragraph>
@@ -181,7 +181,7 @@ function Preparation({ trades, groupID, handleStart }) {
                       groupID === 10 ?
                         <Typography>
                           <Typography.Paragraph>
-                            投资顾问在考察市场行情与股票历史走向后，认为{SELECTS[select]}股票上涨概率较大，因此
+                            投资顾问选择了{SELECTS[select]}股票，并
                             <b>
                               赠送您
                               <Typography.Text keyboard>300</Typography.Text>
@@ -259,7 +259,7 @@ function Preparation({ trades, groupID, handleStart }) {
             <div id="step">
               <Typography>
                 <Typography.Title level={5}>
-                  接下来，进入股票交易环节。您选择的股票为{SELECTS[select]}，持有数量为
+                  接下来，进入股票交易环节。您持有的股票为{SELECTS[select]}，持有数量为
                   <Typography.Text keyboard>300</Typography.Text>
                   ，以及现金金币
                   <Typography.Text keyboard>2000</Typography.Text>

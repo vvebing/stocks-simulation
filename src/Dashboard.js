@@ -83,7 +83,7 @@ export default class Dashboard extends PureComponent {
         containLabel: true,
       },
       title: {
-        text: `${GROUP[groupID]}${SELECTS[select]}股票走势`,
+        text: `${GROUP[groupID] ? GROUP[groupID] : ''}${SELECTS[select] ? SELECTS[select] : ''}股票走势`,
       },
       tooltip: {
         trigger: 'axis',
@@ -172,7 +172,7 @@ export default class Dashboard extends PureComponent {
       centered: true,
       okText: '确定',
       cancelText: '取消',
-      title: `${action}${SELECTS[latestData.select]}股票`,
+      title: `${action}${SELECTS[latestData.select] ? SELECTS[latestData.select] : ''}股票`,
       content: '是否确认该操作？',
       onOk: () => {
         this.setState({
