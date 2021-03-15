@@ -10,9 +10,9 @@ import data from './data.json';
 import { calc, SELECTS } from './App';
 
 const GROUP = {
-  10: '顾问赠送您的',
+  10: '朋友赠送您的',
   20: '您自行选择的',
-  30: '您在顾问的建议下选择的',
+  30: '您在朋友的建议下选择的',
 };
 
 export default class Dashboard extends PureComponent {

@@ -118,7 +118,7 @@ function Preparation({ trades, groupID, handleStart }) {
                           <Typography.Paragraph>
                             您现在拥有
                             <Typography.Text keyboard>2000</Typography.Text>
-                            金币的现金。另外，投资顾问将选择一支股票，并<b>赠送</b>
+                            金币的现金。另外，<b>您的某一位朋友将为您</b>选择一支股票，并赠送
                             <Typography.Text keyboard>300</Typography.Text>
                             股该股票给您。
                           </Typography.Paragraph>
@@ -167,13 +167,13 @@ function Preparation({ trades, groupID, handleStart }) {
                                 <Typography.Paragraph>
                                   您现在拥有
                                   <Typography.Text keyboard>5000</Typography.Text>
-                                  金币的现金作为本金。投资顾问考察市场行情与股票历史走向后，认为在这八支股票中，“甲、乙、丙、丁、戊”的上涨概率较大，推荐您买入。现在您需要选择一支股票并买入
-                                  <Typography.Text keyboard>300</Typography.Text>
-                                  股，请您在
-                                  <b>参考投资顾问的建议后自行作出选择</b>
-                                  。
+                                  金币的现金作为本金。<b>您的某一位朋友</b>考察市场行情与股票历史走向后，认为在这八支股票中，“甲、乙、丙、丁、戊”的上涨概率较大，推荐您买入。
                                 </Typography.Paragraph>
-                                <Typography.Paragraph>请问您选择购入哪支股票？</Typography.Paragraph>
+                                <Typography.Paragraph>
+                                  现在您需要选择一支股票并买入
+                                  <Typography.Text keyboard>300</Typography.Text>
+                                  股，请您在参考朋友的建议后自行作出选择，请问您选择购入哪支股票？
+                                </Typography.Paragraph>
                               </Typography>
                             )
                         )
@@ -181,18 +181,17 @@ function Preparation({ trades, groupID, handleStart }) {
                       groupID === 10 ?
                         <Typography>
                           <Typography.Paragraph>
-                            投资顾问选择了{SELECTS[select]}股票，并
                             <b>
-                              赠送您
-                              <Typography.Text keyboard>300</Typography.Text>
-                              股{SELECTS[select]}股票
+                            您的朋友在考察市场行情与股票历史走向后，认为{SELECTS[select]}股票上涨概率较大，因此赠送您
+                            <Typography.Text keyboard>300</Typography.Text>
+                            股{SELECTS[select]}股票
                             </b>
                             ，即目前您拥有价值
                             <Typography.Text keyboard>5000</Typography.Text>
                             金币的总资产（现金：2000，股票：300 × 10 = 3000）。
                           </Typography.Paragraph>
                           <Typography.Paragraph>
-                            后续股票的所有交易决策都由您本人独立作出，盈亏由您本人承担。
+                            后续股票的所有交易决策都由您本人独立做出，盈亏由您本人承担。
                           </Typography.Paragraph>
                         </Typography> : (
                           groupID === 20 ?
@@ -211,17 +210,15 @@ function Preparation({ trades, groupID, handleStart }) {
                               groupID === 30 &&
                               <Typography>
                                 <Typography.Paragraph>
-                                  <b>
-                                    您在投资顾问的建议下，选择并购入了
-                                    <Typography.Text keyboard>300</Typography.Text>
-                                    股{SELECTS[select]}股票
-                                  </b>
+                                  您在<b>朋友</b>的建议下，选择并购入了
+                                  <Typography.Text keyboard>300</Typography.Text>
+                                  股{SELECTS[select]}股票
                                   ，即目前您拥有价值
                                   <Typography.Text keyboard>5000</Typography.Text>
                                   金币的总资产（现金：2000，股票：300 × 10 = 3000）。
                                 </Typography.Paragraph>
                                 <Typography.Paragraph>
-                                  后续股票的所有交易决策都由您本人独立作出，盈亏由您本人承担。
+                                  后续股票的所有交易决策都由您本人独立做出，盈亏由您本人承担。
                                 </Typography.Paragraph>
                               </Typography>
                             )
