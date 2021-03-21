@@ -1,3 +1,4 @@
+import os
 import json
 import pandas
 
@@ -12,8 +13,8 @@ def read(filename):
         pass
     return dict_data
 
-def write(dict_data):
-    with pandas.ExcelWriter('stocks-simulation-888-20.xlsx') as writer:
+def write(dict_data, filename):
+    with pandas.ExcelWriter('./format-data/%s.xlsx' % filename) as writer:
         General = dict()
         for key, value in dict_data.items():
             if key == 'Trades':
@@ -40,4 +41,16 @@ def write(dict_data):
                 General[key] = value
         pandas.json_normalize(General).to_excel(writer, sheet_name='General', index=False)
 
-write(read('stocks-simulation-888-20.json'))
+def traverseFile(base):
+    for root, ds, fs in os.walk(base):
+        for f in fs:
+            if f.endswith('.json'):
+                yield os.path.join(root, f)
+
+def main():
+    for source in traverseFile('./source-data'):
+        filename = source.replace('.json', '')
+        write(read('%s.json' % filename), filename)
+
+if __name__ == '__main__':
+    main()
